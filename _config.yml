@@ -31,3 +31,23 @@ html:
   use_repository_button: true
   extra_navbar: ""
   google_analytics_id: G-X06NJT7GSH
+  extra_css:
+    - _static/custom.css
+
+sphinx:
+  extra_extensions:
+    - sphinx_external_toc
+    - sphinx_togglebutton
+  config:
+    html_theme_options:
+      show_toc_level: 2
+      secondary_sidebar_items: []
+    
+# Enable cell tags for hiding/showing content
+parse:
+  myst_enable_extensions:
+    - colon_fence
+    - dollarmath
+    - linkify
+    - substitution
+    - tasklist
