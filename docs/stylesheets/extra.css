@@ -163,6 +163,50 @@ article.md-content__inner {
   background-color: var(--md-code-bg-color) !important;
 }
 
+/* Improve Jupyter notebook cell separation and styling */
+.jp-Cell {
+  margin-bottom: 1.5rem !important;
+}
+
+/* Only style code input areas, not markdown cells */
+.jp-Cell.jp-CodeCell .jp-InputArea {
+  background-color: var(--md-code-bg-color) !important;
+  border-radius: 0.25rem !important;
+  margin-bottom: 1rem !important;
+  border: 1px solid var(--md-default-fg-color--lightest) !important;
+}
+
+/* Keep markdown cells clean with no background */
+.jp-Cell.jp-MarkdownCell .jp-InputArea {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+.jp-OutputArea {
+  background-color: var(--md-default-bg-color) !important;
+  border-radius: 0.25rem !important;
+  padding: 1rem !important;
+  border: 1px solid var(--md-accent-fg-color--transparent) !important;
+  margin-top: 0.5rem !important;
+}
+
+.jp-OutputArea-output {
+  background-color: transparent !important;
+}
+
+/* Style input and output prompts differently */
+.jp-InputPrompt {
+  background-color: var(--md-primary-fg-color) !important;
+  color: var(--md-primary-bg-color) !important;
+  font-weight: 600 !important;
+}
+
+.jp-OutputPrompt {
+  background-color: var(--md-accent-fg-color) !important;
+  color: var(--md-primary-bg-color) !important;
+  font-weight: 600 !important;
+}
+
 /* Remove "Made with Material for MkDocs" footer text */
 .md-footer-meta__inner {
   display: none !important;
