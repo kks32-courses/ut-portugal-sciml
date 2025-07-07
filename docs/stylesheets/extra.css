@@ -1,0 +1,226 @@
+/* Remove right sidebar and use full width */
+.md-sidebar--secondary {
+  display: none !important;
+}
+
+.md-content {
+  max-width: none !important;
+}
+
+.md-main__inner {
+  max-width: none !important;
+}
+
+.md-grid {
+  max-width: none !important;
+}
+
+/* Adjust the main content area to use full width */
+.md-main {
+  flex-grow: 1;
+}
+
+.md-content__inner {
+  margin: 0 !important;
+  max-width: none !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+/* Remove padding and adjust margins on smaller screens */
+@media screen and (max-width: 76.25em) {
+  .md-content {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  .md-content__inner {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
+@media screen and (max-width: 60em) {
+  .md-content {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  .md-content__inner {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+}
+
+@media screen and (max-width: 48em) {
+  .md-content {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  .md-content__inner {
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
+  }
+}
+
+/* Ensure the article takes full width */
+article.md-content__inner {
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Adjust container spacing */
+.md-container {
+  max-width: none !important;
+}
+
+/* Make sure tables and code blocks can use full width */
+.md-content table,
+.md-content pre,
+.md-content .highlight {
+  max-width: 100% !important;
+}
+
+/* Mobile code block improvements */
+@media screen and (max-width: 60em) {
+  .md-content pre,
+  .md-content .highlight,
+  .md-content .codehilite,
+  .jp-Cell .jp-InputArea,
+  .jp-Cell .jp-OutputArea {
+    overflow-x: auto !important;
+    white-space: pre !important;
+    word-wrap: normal !important;
+    word-break: normal !important;
+  }
+  
+  .md-content pre code,
+  .md-content .highlight code,
+  .jp-InputArea .jp-InputPrompt + .jp-RenderedHTMLCommon,
+  .jp-Cell .jp-CodeMirrorEditor .CodeMirror {
+    white-space: pre !important;
+    word-wrap: normal !important;
+    overflow-x: auto !important;
+  }
+  
+  /* Ensure code doesn't wrap */
+  .md-content code {
+    white-space: nowrap !important;
+  }
+  
+  /* Allow horizontal scrolling for jupyter cells */
+  .jp-Cell {
+    overflow-x: auto !important;
+  }
+  
+  /* Remove line number padding on mobile/tablet */
+  .jp-InputArea .jp-InputPrompt,
+  .jp-OutputArea .jp-OutputPrompt {
+    display: none !important;
+  }
+  
+  .jp-InputArea,
+  .jp-OutputArea {
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+  }
+  
+  .jp-Cell .jp-InputArea .jp-RenderedHTMLCommon,
+  .jp-Cell .jp-OutputArea .jp-RenderedHTMLCommon {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+  }
+}
+
+/* Fix code block styling */
+.md-content .highlight,
+.md-content pre {
+  background-color: var(--md-code-bg-color) !important;
+}
+
+.md-content .highlight pre,
+.md-content .codehilite pre {
+  background-color: transparent !important;
+}
+
+/* Override any dark theme code blocks */
+.jp-Cell .jp-InputArea .jp-InputPrompt,
+.jp-Cell .jp-OutputArea .jp-OutputPrompt {
+  background-color: transparent !important;
+}
+
+.jp-RenderedHTMLCommon pre,
+.jp-RenderedHTML pre {
+  background-color: var(--md-code-bg-color) !important;
+  color: var(--md-code-fg-color) !important;
+}
+
+/* Ensure code blocks follow Material theme */
+.codehilite,
+.highlight {
+  background-color: var(--md-code-bg-color) !important;
+}
+
+/* Remove "Made with Material for MkDocs" footer text */
+.md-footer-meta__inner {
+  display: none !important;
+}
+
+/* Make headings bolder and reduce spacing */
+.md-content h1,
+.md-content h2,
+.md-content h3,
+.md-content h4,
+.md-content h5,
+.md-content h6 {
+  font-weight: 700 !important;
+  margin-top: 1rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.md-content h1 {
+  font-weight: 800 !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.md-content h2 {
+  font-weight: 750 !important;
+  margin-top: 1.25rem !important;
+  margin-bottom: 0.875rem !important;
+}
+
+/* Reduce left sidebar width */
+.md-sidebar--primary {
+  width: 12rem !important;
+}
+
+/* Adjust content margin to match sidebar width */
+.md-content {
+  margin-left: 1rem !important;
+  margin-right: 1rem !important;
+}
+
+/* Style the integrated TOC in left sidebar */
+.md-nav--integrated .md-nav__item {
+  margin-bottom: 0.25rem;
+}
+
+.md-nav--integrated .md-nav__link {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+}
+
+.md-nav--integrated .md-nav__item--active > .md-nav__link {
+  color: var(--md-accent-fg-color);
+  font-weight: 500;
+}
+
+/* Mobile sidebar adjustments - only when sidebar is visible */
+@media screen and (min-width: 76.25em) {
+  .md-content {
+    margin-left: 1rem !important;
+  }
+}
