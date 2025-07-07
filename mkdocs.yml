@@ -26,14 +26,12 @@ theme:
         name: Switch to light mode
   
   features:
-    - navigation.tabs
     - navigation.sections
     - navigation.expand
     - navigation.path
     - navigation.top
     - navigation.indexes
     - navigation.tracking
-    - navigation.prune
     - search.highlight
     - search.share
     - content.code.copy
@@ -56,7 +54,7 @@ plugins:
       theme: light
   - git-revision-date-localized:
       type: date
-
+  
 markdown_extensions:
   # Python Markdown
   - abbr
@@ -110,11 +108,15 @@ extra_css:
 nav:
   - Home: index.md
   - Multi-Layer Perceptron:
-    - Introduction: 00-mlp/00-mlp.ipynb
+    - 1D Poisson Problem: 00-mlp/01-1d-poisson.ipynb
+    - Function Approximation: 00-mlp/02-function-approximation.ipynb
+    - Universal Approximation & Nonlinearity: 00-mlp/03-universal-approximation-nonlinearity.ipynb
+    - XOR Problem & Need for Depth: 00-mlp/04-xor-depth.ipynb
     - Activation Functions:
       - ReLU: 00-mlp/relu.md
+    - Original MLP: 00-mlp/00-mlp.ipynb
     - Perceptron: 00-mlp/00-perceptron.ipynb
-    - Perceptron Exercise: 00-mlp/00-perceptron-exercise.ipynb
+  
 
 copyright: |
   &copy; 2025 <a href="https://github.com/kks32-courses"  target="_blank" rel="noopener">Krishna Kumar</a>
