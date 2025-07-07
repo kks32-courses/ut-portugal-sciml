@@ -348,7 +348,24 @@ article.md-content__inner {
   }
   
   /* Ensure headings look good in print */
-  h1, h2, h3, h4, h5, h6 {
+  h1 {
+    color: #000 !important;
+    page-break-before: always !important;
+    page-break-after: avoid !important;
+    margin-top: 0 !important;
+    margin-bottom: 1em !important;
+    padding-top: 2em !important;
+  }
+  
+  h2 {
+    color: #000 !important;
+    page-break-before: auto !important;
+    page-break-after: avoid !important;
+    margin-top: 1.5em !important;
+    margin-bottom: 0.75em !important;
+  }
+  
+  h3, h4, h5, h6 {
     color: #000 !important;
     page-break-after: avoid !important;
     margin-top: 1em !important;
