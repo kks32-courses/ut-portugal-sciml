@@ -46,8 +46,6 @@ theme:
   icon:
     repo: fontawesome/brands/github
   
-  # Custom CSS to remove right sidebar and use full width
-  custom_dir: docs/overrides
 
 plugins:
   - search
