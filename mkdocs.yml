@@ -34,7 +34,6 @@ theme:
     - navigation.indexes
     - navigation.tracking
     - navigation.prune
-    - toc.integrate
     - search.highlight
     - search.share
     - content.code.copy
@@ -102,6 +101,7 @@ extra_javascript:
   - https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js
   - https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js
   - javascripts/katex.js
+  - javascripts/adaptive-width.js
 
 extra_css:
   - https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css

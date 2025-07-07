@@ -1,10 +1,12 @@
-/* Remove right sidebar and use full width */
+/* Enable right sidebar for TOC */
 .md-sidebar--secondary {
-  display: none !important;
+  display: block !important;
+  width: 12rem !important;
 }
 
 .md-content {
   max-width: none !important;
+  width: 100% !important;
 }
 
 .md-main__inner {
@@ -64,11 +66,12 @@
   }
 }
 
-/* Ensure the article takes full width */
+/* Ensure the article takes full width within content area */
 article.md-content__inner {
   max-width: none !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
+  width: 100% !important;
 }
 
 /* Adjust container spacing */
@@ -262,9 +265,38 @@ article.md-content__inner {
   font-weight: 500;
 }
 
-/* Mobile sidebar adjustments - only when sidebar is visible */
+/* Desktop layout - adaptive width based on right sidebar presence */
 @media screen and (min-width: 76.25em) {
+  /* Default: both sidebars visible */
   .md-content {
     margin-left: 1rem !important;
+    margin-right: 1rem !important;
+    width: calc(100% - 2rem) !important;
+  }
+  
+  .md-sidebar--secondary {
+    display: block !important;
+  }
+  
+  /* If right sidebar has no content, use full width */
+  .md-sidebar--secondary:empty + .md-content,
+  .md-sidebar--secondary .md-nav__list:empty ~ * .md-content {
+    margin-right: 1rem !important;
+    width: calc(100% - 1rem) !important;
+  }
+  
+  .md-main__inner {
+    max-width: none !important;
+  }
+  
+  .md-grid {
+    max-width: none !important;
+  }
+}
+
+/* Hide right sidebar on mobile/tablet */
+@media screen and (max-width: 76.25em) {
+  .md-sidebar--secondary {
+    display: none !important;
   }
 }
