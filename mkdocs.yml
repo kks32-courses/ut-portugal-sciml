@@ -108,14 +108,14 @@ extra_css:
 nav:
   - Home: index.md
   - Multi-Layer Perceptron:
-    - 1D Poisson Problem: 00-mlp/01-1d-poisson.ipynb
-    - Function Approximation: 00-mlp/02-function-approximation.ipynb
-    - Universal Approximation & Nonlinearity: 00-mlp/03-universal-approximation-theorem.ipynb
+    - Complete: 00-mlp/code.ipynb
+    - Part 1: 00-mlp/notebook_part1.ipynb
+    - Part 2: 00-mlp/notebook_part2.ipynb
     - XOR Problem & Need for Depth: 00-mlp/04-xor-depth.ipynb
     - Activation Functions:
       - ReLU: 00-mlp/relu.md
-    - Original MLP: 00-mlp/00-mlp.ipynb
     - Perceptron: 00-mlp/00-perceptron.ipynb
+    - Notes: 00-mlp/mlp.ipynb
   
 
 copyright: |

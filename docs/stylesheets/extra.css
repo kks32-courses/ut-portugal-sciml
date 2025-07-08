@@ -118,12 +118,6 @@ article.md-content__inner {
     overflow-x: auto !important;
   }
   
-  /* Remove line number padding on mobile/tablet */
-  .jp-InputArea .jp-InputPrompt,
-  .jp-OutputArea .jp-OutputPrompt {
-    display: none !important;
-  }
-  
   .jp-InputArea,
   .jp-OutputArea {
     padding-left: 0 !important;
@@ -135,6 +129,12 @@ article.md-content__inner {
     margin-left: 0 !important;
     padding-left: 0 !important;
   }
+}
+
+/* Remove line number padding on mobile/tablet */
+.jp-InputArea .jp-InputPrompt,
+.jp-OutputArea .jp-OutputPrompt {
+  display: none !important;
 }
 
 /* Fix code block styling */

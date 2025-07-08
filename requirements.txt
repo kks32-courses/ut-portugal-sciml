@@ -1,3 +1,4 @@
+six
 Pygments
 jupyter-book
 matplotlib

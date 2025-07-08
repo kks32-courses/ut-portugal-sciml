@@ -133,7 +133,7 @@
     (function() {
         // --- DATA DEFINITION ---
         const class0_X = [
-            [-2.75, 0.27], [-3.63, 1.20], [-2.51, 1.95], [-1.85, 3.12], [-0.81, 2.54], [0.03, 3.58], 
+            [-2.75, 0.27], [-3.63, 1.20], [-2.51, 1.95], [-1.85, 3.02], [-0.81, 2.54], [0.03, 3.28], 
             [1.82, 3.23], [3.37, 2.48], [4.76, 1.96], [4.74, 0.82], [3.22, 1.02], [0.38, 1.22],
             [-0.62, -0.04], [0.52, -0.44], [1.72, -0.31], [2.29, -1.63], [0.87, -1.84], [-0.87, -1.52]
         ];
@@ -191,8 +191,8 @@
             
             if (isSolve) {
                 // --- MODIFIED SECTION: Create a scaled diagonal line ---
-                const line_p1_base = [0, 5];
-                const line_p2_base = [4.7, 0];
+                const line_p1_base = [0, 5.2];
+                const line_p2_base = [5, 0];
 
                 // Scale the line's endpoints by the current scaling factor
                 const line_p1_scaled = [line_p1_base[0] * scale, line_p1_base[1] * scale];
