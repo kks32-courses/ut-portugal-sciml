@@ -7,20 +7,20 @@ repo_name: Course Repo
 
 theme:
   name: material
-  logo: logo.png
-  favicon: logo.png
+  logo: chishiki.png
+  favicon: chishiki.png
   palette:
     # Palette toggle for light mode
     - scheme: default
-      primary: blue
-      accent: blue
+      primary: indigo
+      accent: indigo
       toggle:
         icon: material/brightness-7 
         name: Switch to dark mode
     # Palette toggle for dark mode
     - scheme: slate
-      primary: blue
-      accent: blue
+      primary: indigo
+      accent: indigo
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
@@ -110,7 +110,7 @@ nav:
   - Multi-Layer Perceptron:
     - 1D Poisson Problem: 00-mlp/01-1d-poisson.ipynb
     - Function Approximation: 00-mlp/02-function-approximation.ipynb
-    - Universal Approximation & Nonlinearity: 00-mlp/03-universal-approximation-nonlinearity.ipynb
+    - Universal Approximation & Nonlinearity: 00-mlp/03-universal-approximation-theorem.ipynb
     - XOR Problem & Need for Depth: 00-mlp/04-xor-depth.ipynb
     - Activation Functions:
       - ReLU: 00-mlp/relu.md

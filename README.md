@@ -28,15 +28,15 @@ applications.
 
 ### Target Audience
 This course is designed for:
-● Engineers & Scientists : Professionals in various domains (Mechanical, Civil,
+- Engineers & Scientists : Professionals in various domains (Mechanical, Civil,
 Chemical, Environmental, Aerospace, etc.) who utilize computational modeling and
 simulation and seek to integrate AI/ML for enhanced performance and discovery.
 
-● Researchers : Academics and R&D professionals looking to apply cutting-edge SciML
+- Researchers : Academics and R&D professionals looking to apply cutting-edge SciML
 techniques to their research problems.
 
-● Data Scientists & ML Practitioners : Individuals with ML background interested in
+- Data Scientists & ML Practitioners : Individuals with ML background interested in
 applying their skills to scientific and engineering domains.
 
-● Technical Managers : Decision-makers aiming to understand the potential of SciML and
+- Technical Managers : Decision-makers aiming to understand the potential of SciML and
 accelerated computing for their teams and projects.
