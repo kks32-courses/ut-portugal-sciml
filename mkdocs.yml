@@ -107,16 +107,10 @@ extra_css:
 
 nav:
   - Home: index.md
-  - Multi-Layer Perceptron:
-    - Complete: 00-mlp/code.ipynb
-    - Part 1: 00-mlp/notebook_part1.ipynb
-    - Part 2: 00-mlp/notebook_part2.ipynb
-    - XOR Problem & Need for Depth: 00-mlp/04-xor-depth.ipynb
+  - Multi-Layer Perceptron: 
+    - MLP: 00-mlp/mlp.ipynb
     - Activation Functions:
       - ReLU: 00-mlp/relu.md
-    - Perceptron: 00-mlp/00-perceptron.ipynb
-    - Notes: 00-mlp/mlp.ipynb
-  
 
 copyright: |
   &copy; 2025 <a href="https://github.com/kks32-courses"  target="_blank" rel="noopener">Krishna Kumar</a>
