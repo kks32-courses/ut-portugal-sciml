@@ -45,6 +45,15 @@
 %\usepackage{handoutWithNotes}
 %\pgfpagesuselayout{2 on 1}[border shrink=2mm]
 
+\AtBeginSection[]{
+	\begin{frame}{Outline}
+		\tableofcontents[
+		currentsection,      % highlight the current section
+		hideallsubsections   % show only section titles
+		]
+	\end{frame}
+}
+
 %----------------------------------------------------------------------------------------
 %	TITLE PAGE
 %----------------------------------------------------------------------------------------
@@ -245,7 +254,6 @@ This is equivalent to: $h_2 = W_{eq} x + b_{eq}$ (still linear!)
 \begin{frame}
 \frametitle{Common Activation Functions}
 
-\mode<beamer>{
 \textbf{Sigmoid:} $\sigma(x) = \frac{1}{1 + e^{-x}}$ (squashes to (0,1))
 
 \textbf{Tanh:} $\tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$ (squashes to (-1,1))
@@ -253,10 +261,13 @@ This is equivalent to: $h_2 = W_{eq} x + b_{eq}$ (still linear!)
 \textbf{ReLU:} $f(x) = \max(0, x)$ (efficient, prevents vanishing gradients)
 
 \textbf{Leaky ReLU:} $f(x) = \max(\alpha x, x)$ (prevents dead neurons)
-}
-\mode<handout>{
-\vspace{4cm}
-}
+
+\href{https://kks32-courses.github.io/ut-portugal-sciml/00-mlp/relu/}{\beamergotobutton{ReLU Demo}}
+\end{frame}
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{Common Activation Functions}
 
 \begin{figure}[ht]
 	\centering
@@ -300,7 +311,7 @@ F(x) = \sum_{i=1}^{N} w_i \sigma(v_i x + b_i) + w_0
 \frametitle{Single Hidden Layer Architecture}
 
 For 1D input $x$, a single-layer network with $N_h$ hidden neurons:
-
+ \begin{minipage}[t]{0.48\textwidth}
 \mode<beamer>{
 \begin{align*}
 \mathbf{z}^{(1)} &= W^{(1)}x + \mathbf{b}^{(1)} \quad \text{(pre-activation)} \\
@@ -312,12 +323,15 @@ z^{(2)} &= W^{(2)}\mathbf{h} + b^{(2)} \quad \text{(output layer)} \\
 \mode<handout>{
 \vspace{3cm}
 }
-
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.7\textwidth]{figs/single-layer-nn2.png}
+	\includegraphics[width=0.9\linewidth]{figs/single-layer-nn2.png}
 	\caption*{Single hidden layer neural network}
 \end{figure}
+\end{minipage}
 
 \end{frame}
 
@@ -360,6 +374,7 @@ Optimization problem:
 \begin{frame}
 \frametitle{Gradient Descent Algorithm}
 
+\begin{minipage}[t]{0.45\textwidth}
 \textbf{Basic Algorithm:}
 \begin{enumerate}
 \item Initialize weights randomly
@@ -380,16 +395,19 @@ where $\eta$ is the learning rate.
 \vspace{1.5cm}
 }
 
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.53\textwidth}
+\centering
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.6\textwidth]{figs/sgd.gif}
+	\includegraphics[width=0.9\linewidth]{figs/sgd.png}
 	\caption*{Gradient descent optimization}
 \end{figure}
+\href{https://kks32-courses.github.io/ut-portugal-sciml/00-mlp/sgd/}{\beamergotobutton{SGD Demo}}
+\end{minipage}
 
 \end{frame}
-
-%------------------------------------------------
-\section{Experimental Results}
 
 %------------------------------------------------
 \begin{frame}
@@ -401,12 +419,9 @@ where $\eta$ is the learning rate.
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.9\textwidth]{figs/width-quality.png}
+	\includegraphics[width=0.6\linewidth]{figs/width-quality.png}
 	\caption*{Approximation quality vs network width}
 \end{figure}
-
-\textbf{Results:} Clear improvement with increased width, validating Universal Approximation Theorem.
-
 \end{frame}
 
 
@@ -419,23 +434,28 @@ where $\eta$ is the learning rate.
 	\includegraphics[width=0.9\textwidth]{figs/training-validation-fit.png}
 	\caption*{Training and validation convergence}
 \end{figure}
+\end{frame}
 
 %------------------------------------------------
 \begin{frame}
 \frametitle{Training Convergence Analysis}
-
+\begin{minipage}[t]{0.58\textwidth}
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.9\textwidth]{figs/training-convergence.png}
+	\includegraphics[width=0.65\linewidth]{figs/training-convergence.png}
 	\caption*{Training convergence and final loss vs width}
 \end{figure}
-
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.38\textwidth}
 \textbf{Key Findings:}
 \begin{itemize}
 \item 50 neurons: $\sim$10x better than 5 neurons
 \item Logarithmic improvement with width
 \item Convergence rate similar across widths
 \end{itemize}
+
+\end{minipage}
 
 \end{frame}
 
@@ -447,7 +467,7 @@ where $\eta$ is the learning rate.
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.7\textwidth]{figs/overfitting.png}
+	\includegraphics[width=0.9\textwidth]{figs/overfitting.png}
 	\caption*{Under and overfitting illustration}
 \end{figure}
 
@@ -550,9 +570,9 @@ y &= \sigma(v_1 h_1 + v_2 h_2 + b_3)
 \textbf{XOR Decomposition:}
 \mode<beamer>{
 \begin{align*}
-h_1 &= \sigma(\text{weights}) \quad \text{(≈ OR gate)} \\
-h_2 &= \sigma(\text{weights}) \quad \text{(≈ AND gate)} \\
-y &= \sigma(v_1 h_1 + v_2 h_2 + b_3) \quad \text{(≈ OR AND NOT)}
+h_1 &= \sigma(\text{weights}) \quad \text{($\approxeq$ OR gate)} \\
+h_2 &= \sigma(\text{weights}) \quad \text{($\approxeq$ AND gate)} \\
+y &= \sigma(v_1 h_1 + v_2 h_2 + b_3) \quad \text{($\approxeq$ OR AND NOT)}
 \end{align*}
 
 \textbf{Result:} XOR = (OR) AND (NOT AND) = compositional solution!
@@ -586,25 +606,24 @@ y &= \sigma(v_1 h_1 + v_2 h_2 + b_3) \quad \text{(≈ OR AND NOT)}
 \frametitle{Historical Timeline: From Crisis to Revolution}
 
 \begin{center}
-\begin{tabular}{l|l|l}
+\begin{tabular}{lll}
+\toprule
 \textbf{Year} & \textbf{Event} & \textbf{Impact} \\
-\hline
+\midrule
 1943 & McCulloch-Pitts neuron & Foundation laid \\
 1957 & Rosenblatt's Perceptron & First learning success \\
 \textbf{1969} & \textbf{Minsky \& Papert: XOR} & \textbf{Showed limits} \\
-1970s-80s & "AI Winter" & Funding dried up \\
+1970s-80s & ``AI Winter" & Funding dried up \\
 1986 & Backpropagation & Enabled multi-layer training \\
 1989 & Universal Approximation & Theoretical foundation \\
 2006+ & Deep Learning Revolution & Depth proves essential \\
+\bottomrule
 \end{tabular}
 \end{center}
 
 \textbf{Lesson:} XOR taught us that depth is necessity, not luxury.
 
 \end{frame}
-
-%------------------------------------------------
-\section{Why Depth Matters}
 
 %------------------------------------------------
 \begin{frame}
