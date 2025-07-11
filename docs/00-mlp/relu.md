@@ -1,4 +1,4 @@
-# The importance of non-linear transformation
+# ReLU and the importance of non-linear transformation
 
 <!DOCTYPE html>
 <html>
@@ -85,6 +85,111 @@
         font-weight: bold; 
         min-height: 25px; 
     }
+    
+    /* New styles for equations */
+    .nn-equations-section {
+        grid-column: 1 / -1;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    
+    .nn-equations-header {
+        padding-left: 1em;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        background-color: #f8f9fa;
+        border-radius: 8px 8px 0 0;
+        transition: background-color 0.2s;
+        user-select: none;
+    }
+    
+    .nn-equations-header:hover {
+        background-color: #e9ecef;
+    }
+    
+    .nn-equations-toggle {
+        width: 0;
+        height: 0;
+        border-left: 8px solid #495057;
+        border-top: 6px solid transparent;
+        border-bottom: 6px solid transparent;
+        margin-right: 12px;
+        transition: transform 0.3s ease;
+    }
+    
+    .nn-equations-toggle.expanded {
+        transform: rotate(90deg);
+    }
+    
+    .nn-equations-content {
+        padding: 20px;
+        display: none;
+    }
+    
+    .nn-equations-content.show {
+        display: block;
+    }
+    
+    .nn-equation {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 10px 0;
+        font-family: 'Courier New', monospace;
+        font-size: 16px;
+    }
+    
+    .nn-equation-title {
+        font-weight: bold;
+        color: #495057;
+        margin-bottom: 8px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+    
+    .nn-matrix-toggle {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-top: 10px;
+        transition: background-color 0.2s;
+    }
+    
+    .nn-matrix-toggle:hover {
+        background-color: #0056b3;
+    }
+    
+    .nn-matrix-display {
+        background-color: #ffffff;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        padding: 15px;
+        margin-top: 10px;
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+        display: none;
+    }
+    
+    .nn-matrix-display.show {
+        display: block;
+    }
+    
+    .nn-matrix {
+        text-align: center;
+        white-space: pre-line;
+    }
+    
+    .nn-matrix-values {
+        color: #dc3545;
+        font-weight: bold;
+    }
 </style>
 </head>
 <body>
@@ -93,7 +198,7 @@
     <h2>Interactive Transformation Demo</h2>
     <p>Adjust the sliders to see how a linear (rotation + scaling) and non-linear (ReLU) transformation can make data separable. Or, press "Solve" to see a working solution.</p>
 
-    <!-- 3. HTML Layout for Controls and Plots -->
+    <!-- Controls -->
     <div class="nn-controls">
         <div class="nn-slider-group">
             <label for="nn-rotationSlider">Rotation Angle: <span id="nn-rotationValue">0</span>°</label>
@@ -110,6 +215,39 @@
         <button id="nn-solveButton" class="nn-solve-button">Solve</button>
     </div>
 
+    <!-- Equations Section -->
+    <div class="nn-equations-section">
+        <div class="nn-equations-header" id="nn-equationsHeader">
+            <div class="nn-equations-toggle" id="nn-equationsToggle"></div>
+            <h3 style="margin: 0; color: #495057;">Mathematical Transformations</h3>
+        </div>
+        
+        <div class="nn-equations-content" id="nn-equationsContent">
+            <div class="nn-equation">
+                <div class="nn-equation-title">1. Linear Transformation:</div>
+                <div><strong>Y = W<sup>T</sup>X + b</strong></div>
+                <div style="margin-top: 8px; font-size: 14px; color: #6c757d;">
+                    Where W is the transformation matrix (rotation + scaling) and b is the bias (set to 0 here)
+                </div>
+                <button class="nn-matrix-toggle" id="nn-matrixToggle">Show Matrix W</button>
+                <div class="nn-matrix-display" id="nn-matrixDisplay">
+                    <div class="nn-matrix" id="nn-matrixContent"></div>
+                </div>
+            </div>
+            
+            <div class="nn-equation">
+                <div class="nn-equation-title">2. Non-linear Transformation (Leaky ReLU):</div>
+                <div><strong>Z = f(Y) = max(αY, Y)</strong></div>
+                <div style="margin-top: 8px; font-size: 14px; color: #6c757d;">
+                    Where α is the negative slope parameter: <span id="nn-alphaValue">1.00</span>
+                </div>
+                <div style="margin-top: 8px; font-size: 12px; color: #6c757d;">
+                    Applied element-wise: f(y) = y if y > 0, else α × y
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="nn-statusMessage"></div>
 
     <div class="nn-container">
@@ -118,7 +256,7 @@
             <div id="nn-plotX"></div>
         </div>
         <div class="nn-plot-container">
-            <div class="nn-plot-title">2. After Linear Transform (Y = WX)</div>
+            <div class="nn-plot-title">2. After Linear Transform (Y = W<sup>T</sup>X)</div>
             <div id="nn-plotY"></div>
         </div>
         <div class="nn-plot-container">
@@ -154,6 +292,53 @@
         const traceClass1 = { mode: 'markers', type: 'scatter', marker: { color: 'gold', size: 8, line: { color: 'orange', width: 1.5 } } };
         const unpack = (points) => ({ x: points.map(p => p[0]), y: points.map(p => p[1]) });
 
+        // --- MATRIX DISPLAY FUNCTIONS ---
+        function updateMatrixDisplay(angleDeg, scale) {
+            const angleRad = angleDeg * Math.PI / 180;
+            const cosT = Math.cos(angleRad);
+            const sinT = Math.sin(angleRad);
+            
+            const w11 = (cosT * scale).toFixed(3);
+            const w12 = (-sinT * scale).toFixed(3);
+            const w21 = (sinT * scale).toFixed(3);
+            const w22 = (cosT * scale).toFixed(3);
+            
+            const matrixContent = `W = ⎡ <span class="nn-matrix-values">${w11}</span>  <span class="nn-matrix-values">${w12}</span> ⎤
+    ⎣ <span class="nn-matrix-values">${w21}</span>  <span class="nn-matrix-values">${w22}</span> ⎦
+
+This combines:
+• Rotation by ${angleDeg}°
+• Scaling by ${scale}`;
+            
+            document.getElementById('nn-matrixContent').innerHTML = matrixContent;
+        }
+
+        function toggleMatrix() {
+            const display = document.getElementById('nn-matrixDisplay');
+            const button = document.getElementById('nn-matrixToggle');
+            
+            if (display.classList.contains('show')) {
+                display.classList.remove('show');
+                button.textContent = 'Show Matrix W';
+            } else {
+                display.classList.add('show');
+                button.textContent = 'Hide Matrix W';
+            }
+        }
+
+        function toggleEquations() {
+            const content = document.getElementById('nn-equationsContent');
+            const toggle = document.getElementById('nn-equationsToggle');
+            
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                toggle.classList.remove('expanded');
+            } else {
+                content.classList.add('show');
+                toggle.classList.add('expanded');
+            }
+        }
+
         // --- TRANSFORMATION LOGIC ---
         function linearTransform(points, angleDeg, scale) {
             const angleRad = angleDeg * Math.PI / 180;
@@ -179,6 +364,10 @@
             document.getElementById('nn-rotationValue').textContent = angle.toFixed(0);
             document.getElementById('nn-scaleValue').textContent = scale.toFixed(2);
             document.getElementById('nn-reluValue').textContent = slope.toFixed(2);
+            document.getElementById('nn-alphaValue').textContent = slope.toFixed(2);
+
+            // Update matrix display
+            updateMatrixDisplay(angle, scale);
 
             const class0_Y = linearTransform(class0_X, angle, scale);
             const class1_Y = linearTransform(class1_X, angle, scale);
@@ -237,6 +426,8 @@
             document.getElementById('nn-scaleSlider').addEventListener('input', () => updatePlots(false));
             document.getElementById('nn-reluSlider').addEventListener('input', () => updatePlots(false));
             document.getElementById('nn-solveButton').addEventListener('click', solve);
+            document.getElementById('nn-matrixToggle').addEventListener('click', toggleMatrix);
+            document.getElementById('nn-equationsHeader').addEventListener('click', toggleEquations);
             
             window.addEventListener('resize', () => {
                 Plotly.relayout('nn-plotX', { 'width': document.getElementById('nn-plotX').parentElement.clientWidth - 20 });
