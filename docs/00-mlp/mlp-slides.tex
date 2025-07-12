@@ -370,6 +370,189 @@ Optimization problem:
 
 \end{frame}
 
+
+%------------------------------------------------
+% INSERT THESE 3 SLIDES INTO MLP PRESENTATION
+% After "Training Process" slide, before "Gradient Descent Algorithm"
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{The Gradient Problem}
+	
+	\textbf{Training neural networks requires gradients:} $\frac{\partial \mathcal{L}}{\partial \theta}$ for all parameters $\theta$.
+	
+	\begin{minipage}[t]{0.48\textwidth}
+		\textbf{Traditional approaches have fundamental flaws:}
+		\begin{itemize}
+			\item \textbf{Manual:} Exact, but error-prone and doesn't scale
+			\item \textbf{Symbolic:} Exact, but "expression swell"
+			\item \textbf{Numerical:} $f'(x) \approx \frac{f(x+h) - f(x-h)}{2h}$
+			\begin{itemize}
+				\item Inaccurate (rounding errors)
+				\item Expensive (multiple evaluations)
+			\end{itemize}
+		\end{itemize}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[t]{0.48\textwidth}
+		\begin{figure}[ht]
+			\centering
+			\includegraphics[width=0.9\textwidth]{figs/differentiation.png}
+		\end{figure}
+	\end{minipage}
+	
+	\mode<beamer>{
+		For a neural network with thousands of parameters:
+		\begin{equation*}
+			\theta = \{W^{(1)}, \mathbf{b}^{(1)}, W^{(2)}, \mathbf{b}^{(2)}, \ldots\}
+		\end{equation*}
+	}
+	\mode<handout>{
+		\vspace{1cm}
+	}
+	
+	\textbf{We need a fourth approach: Automatic Differentiation!}
+	
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+	\frametitle{Automatic Differentiation: The Solution}
+	
+	Every function is a computational graph of elementary operations.
+	
+	\begin{columns}[T]
+		\begin{column}{0.35\textwidth}
+			Consider: $y = x_1^2 + x_2$
+
+			\vspace{1em}
+
+			\textbf{Evaluation Trace:}
+			\begin{enumerate}
+				\item $v_1 = x_1^2$
+				\item $y = v_1 + x_2$
+			\end{enumerate}
+			
+		\end{column}
+		\begin{column}{0.65\textwidth}
+			\begin{figure}[ht]
+				\centering
+				\includegraphics[width=\linewidth]{figs/ad3.png}
+			\end{figure}
+		\end{column}
+	\end{columns}
+	\vspace{1em}
+	This decomposition is the key that makes AD possible. By applying the chain rule to each elementary step, we can compute exact derivatives.
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+
+\begin{frame}
+	\frametitle{Forward Mode Automatic Differentiation}
+	
+	Forward mode AD propagates derivative information \textbf{forward} through the graph, alongside the function evaluation.
+	
+	\begin{figure}[ht]
+		\centering
+		\includegraphics[width=\textwidth]{figs/forward-mode-ad.png}
+	\end{figure}
+	\centering
+	\href{https://kks32-courses.github.io/ut-portugal-sciml/00-mlp/ad-graph/}{\beamergotobutton{AD Demo}}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+	\frametitle{Forward Mode: Step-by-Step Example}
+	
+	Let's compute $\frac{\partial y}{\partial x_1}$ for $y = x_1^2 + x_2$.
+	
+	\begin{block}{1. Seed the input w.r.t. $x_1$}
+		Set $\dot{x}_1 = 1$ and $\dot{x}_2 = 0$.
+	\end{block}
+	
+	\begin{block}{2. Forward Propagation}
+		\begin{itemize}
+			\item $v_1 = x_1^2 \implies \dot{v}_1 = 2x_1 \cdot \dot{x}_1 = 2x_1 \cdot 1 = 2x_1$
+			\item $y = v_1 + x_2 \implies \dot{y} = \dot{v}_1 + \dot{x}_2 = 2x_1 + 0 = 2x_1$
+		\end{itemize}
+	\end{block}
+	
+	\begin{alertblock}{Result}
+		The final propagated tangent $\dot{y}$ is the derivative: $\frac{\partial y}{\partial x_1} = 2x_1$.
+	\end{alertblock}
+	
+	\textbf{Key Idea:} To get the derivative w.r.t. $x_2$, we would need a \textit{new pass} with seeds $\dot{x}_1 = 0, \dot{x}_2 = 1$.
+	
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+\begin{frame}
+	\frametitle{Reverse Mode Automatic Differentiation}
+	
+	Reverse mode AD (or \textbf{backpropagation}) computes derivatives by propagating information \textbf{backward} from the output.
+	
+	\textbf{Algorithm:}
+	\begin{enumerate}
+		\item \textbf{Forward Pass:} Evaluate the function and store all intermediate values.
+		\item \textbf{Backward Pass:} Starting from the output, use the chain rule to propagate "adjoints" ($\bar{v} = \frac{\partial y}{\partial v}$) backward through the graph.
+	\end{enumerate}
+	
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+	\frametitle{Reverse Mode: One Pass for All Gradients}
+	The backward pass systematically applies the chain rule.
+	
+	Let's trace the computation for $y = x_1^2 + x_2$:
+	\begin{figure}[ht]
+		\centering
+		\includegraphics[width=\textwidth]{figs/ad7.png}
+	\end{figure}
+	Reverse mode computes \textbf{all} partial derivatives in a single backward pass.
+	
+\end{frame}
+
+%-------------------------------------------------------------------------------
+
+\begin{frame}
+	\frametitle{When to Use Forward vs. Reverse Mode}
+	
+	The choice depends on the dimensions of your function $f: \mathbb{R}^n \to \mathbb{R}^m$.
+	
+	\begin{columns}[T]
+		\begin{column}{0.48\textwidth}
+			\begin{block}{Forward Mode}
+				\begin{itemize}
+					\item \textbf{Cost:} One pass per \textit{input} variable.
+					\item \textbf{Efficient when:} Few inputs, many outputs ($n \ll m$).
+					\item \textbf{Computes:} Jacobian-vector products ($J \cdot v$).
+				\end{itemize}
+			\end{block}
+		\end{column}
+		\hfill
+		\begin{column}{0.48\textwidth}
+			\begin{block}{Reverse Mode}
+				\begin{itemize}
+					\item \textbf{Cost:} One pass per \textit{output} variable.
+					\item \textbf{Efficient when:} Many inputs, few outputs ($n \gg m$).
+					\item \textbf{Computes:} Vector-Jacobian products ($v^T \cdot J$).
+				\end{itemize}
+			\end{block}
+		\end{column}
+	\end{columns}
+	
+	\vspace{1cm}
+	
+	\textbf{Machine Learning context:} We have millions of parameters (inputs, $n$) and a single scalar loss function (output, $m=1$).
+	\begin{center}
+		\textbf{Reverse mode is the clear winner!}
+	\end{center}
+	\centering
+	\href{https://kks32-courses.github.io/ut-portugal-sciml/00-mlp/ad}{\beamergotobutton{AD Notebook}}
+	
+\end{frame}
+
 %------------------------------------------------
 \begin{frame}
 \frametitle{Gradient Descent Algorithm}
