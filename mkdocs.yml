@@ -112,7 +112,9 @@ nav:
     - Activation Function ReLU: 00-mlp/relu.md
     - Automatic Differentiation: 00-mlp/ad.md
     - Gradient Descent: 00-mlp/sgd.md
-    
+  - PINNs:
+    - PINNs oscillator: 01-pinn/pinn.ipynb
+    - Soft vs Hard constraint: 01-pinn/poisson.ipynb
 
 copyright: |
   &copy; 2025 <a href="https://github.com/kks32-courses"  target="_blank" rel="noopener">Krishna Kumar</a>
