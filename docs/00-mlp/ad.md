@@ -333,8 +333,6 @@
 
     <div class="ad-controls">
         <button id="forward-btn" class="ad-button active">Forward Mode</button>
-        <button id="reverse-btn" class="ad-button">Reverse Mode</button>
-        
         <!-- Forward mode differentiation selector -->
         <div id="forward-wrt-selector" style="display: flex; align-items: center; gap: 10px; background-color: #f8f9fa; padding: 8px 12px; border-radius: 6px; border: 1px solid #dee2e6;">
             <span style="font-weight: bold; color: #333;">Differentiate w.r.t.:</span>
@@ -345,7 +343,7 @@
                 <input type="radio" name="forward-wrt" value="x2"> x₂
             </label>
         </div>
-        
+        <button id="reverse-btn" class="ad-button">Reverse Mode</button>        
         <button id="step-btn" class="ad-button">Next Step</button>
         <button id="reset-btn" class="ad-button">Reset</button>
         <button id="auto-btn" class="ad-button">Auto Play</button>
