@@ -111,7 +111,8 @@ nav:
     - MLP: 00-mlp/mlp.ipynb
     - Activation Function ReLU: 00-mlp/relu.md
     - Gradient Descent: 00-mlp/sgd.md
-    - AD: 00-mlp/ad.md
+    - Automatic Differentiation: 00-mlp/ad.ipynb
+    - AD Computation Demo: 00-mlp/ad-graph.md
 
 copyright: |
   &copy; 2025 <a href="https://github.com/kks32-courses"  target="_blank" rel="noopener">Krishna Kumar</a>
