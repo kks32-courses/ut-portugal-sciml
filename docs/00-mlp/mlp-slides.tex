@@ -142,29 +142,43 @@ u(x) = \sin(\pi x)
 \begin{frame}
 \frametitle{Traditional vs Neural Network Approaches}
 
-\textbf{Traditional Methods (Finite Difference):}
+\begin{minipage}[t]{0.53\textwidth}
+\textbf{Finite Difference:}
 \begin{itemize}
 \item Discretize domain into grid points
 \item Solve for values at specific locations
 \item Result: Discrete representation
 \end{itemize}
 
-\mode<beamer>{
-Finite difference approximation:
-\begin{equation*}
-\frac{d^2u}{dx^2} \approx \frac{u_{i+1} - 2u_i + u_{i-1}}{h^2}
-\end{equation*}
-}
-\mode<handout>{
-\vspace{1.5cm}
-}
 
 \textbf{Neural Network Approach:}
 \begin{itemize}
-\item Learn continuous function $u_{NN}(x; \theta)$
-\item Approximate solution over entire domain
-\item Parameters $\theta$ trained from sparse data
+	\item Learn continuous function $u_{NN}(x; \theta)$
+	\item Approximate solution over entire domain
+	\item Parameters $\theta$ trained from sparse data
 \end{itemize}
+
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.43\textwidth}
+\vspace{1em}
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figs/finite-difference-methods.png}
+	\caption*{Finite Difference Approximation}
+\end{figure}
+
+\mode<beamer>{
+	\begin{equation*}
+		\frac{d^2u}{dx^2} \approx \frac{u_{i+1} - 2u_i + u_{i-1}}{h^2}
+	\end{equation*}
+}
+\mode<handout>{
+	\vspace{1.5cm}
+}
+
+\end{minipage}
 
 \end{frame}
 
