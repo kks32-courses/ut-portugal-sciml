@@ -118,7 +118,7 @@ nav:
     - Inverse analysis: 01-pinn/inverse-heat.ipynb
   - DeepONet:
     - DeepONet: 02-deeponet/deeponet.ipynb
-    - DeepONet Physical Meaning: 02-deeponet/deeponet-explanation.md
+    - DeepONet Interpretation: 02-deeponet/deeponet-explanation.md
 
 copyright: |
   &copy; 2025 <a href="https://github.com/kks32-courses"  target="_blank" rel="noopener">Krishna Kumar</a>
