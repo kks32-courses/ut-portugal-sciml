@@ -193,7 +193,7 @@
     .einsum-flow-container {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: center;
         gap: 15px;
         margin: 20px 0;
         flex-wrap: wrap;
@@ -292,35 +292,25 @@
     
     .einsum-arch-container {
         display: grid;
-        grid-template-columns: 1fr 0.3fr 1fr 0.3fr 1fr;
-        grid-template-rows: auto auto auto;
-        gap: 10px 15px;
-        margin: 15px 0;
-        align-items: center;
-        justify-items: center;
-        font-size: 12px;
-        max-width: 900px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    
-    .einsum-arch-row-1 {
-        grid-row: 1;
-        display: contents;
-    }
-    
-    .einsum-arch-row-2 {
-        grid-row: 2;
-        display: contents;
-    }
-    
-    .einsum-arch-row-3 {
-        grid-row: 3;
-        grid-column: 1 / -1;
-        display: flex;
-        justify-content: center;
+        grid-template-columns: 2fr 1fr;
         gap: 20px;
         align-items: center;
+        font-size: 12px;
+        max-width: 950px;
+        margin: 15px auto;
+    }
+
+    .einsum-arch-pipelines {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .einsum-arch-pipeline-row, .einsum-arch-combination-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
     }
     
     .einsum-arch-box {
@@ -331,7 +321,12 @@
         text-align: center;
         min-width: 80px;
         position: relative;
+        flex: 1; /* Allow boxes to grow */
     }
+
+     .einsum-arch-box.input-box {
+        flex-grow: 0.8;
+     }
     
     .einsum-arch-box.functions {
         border-color: #007bff;
@@ -368,6 +363,7 @@
         font-size: 18px;
         font-weight: bold;
         color: #6c757d;
+        flex-grow: 0;
     }
     
     .einsum-arch-label {
@@ -507,11 +503,7 @@
         </div>
         
         <div class="einsum-right-section">
-            <div class="einsum-plot-container">
-                <div class="einsum-plot-title">Dot Product Computation</div>
-                <div id="einsum-plotComputation"></div>
-            </div>
-            <div class="einsum-plot-container">
+            <div class="einsum-plot-container" style="grid-column: 1 / -1;">
                 <div class="einsum-plot-title">Final Result [batch, n]</div>
                 <div id="einsum-plotResult"></div>
             </div>
@@ -667,67 +659,10 @@
         Plotly.react(containerId, traces, layout);
     }
     
-    // Create simplified computation visualization
-    function createComputationVisualization(branchData, trunkData, resultData, containerId) {
-        const batch = branchData.length;
-        const n = trunkData[0].length;
-        const p = branchData[0].length;
-        
-        const traces = [];
-        
-        // Show only first batch for clarity
-        const b = 0;
-        for (let i = 0; i < Math.min(n, 2); i++) { // Show max 2 query points
-            const x = Array.from({length: p}, (_, j) => j);
-            const y_branch = branchData[b];
-            const y_trunk = trunkData[b][i];
-            
-            traces.push({
-                x: x,
-                y: y_branch,
-                mode: 'lines+markers',
-                name: `Branch B${b}`,
-                line: { color: '#28a745', width: 2 },
-                marker: { size: 6 },
-                showlegend: i === 0
-            });
-            
-            traces.push({
-                x: x,
-                y: y_trunk,
-                mode: 'lines+markers',
-                name: `Trunk B${b} n${i}`,
-                line: { color: '#dc3545', width: 2, dash: 'dash' },
-                marker: { size: 6 },
-                showlegend: i === 0
-            });
-        }
-        
-        const layout = {
-            margin: { l: 40, r: 20, t: 30, b: 40 },
-            height: 200,
-            xaxis: { 
-                title: 'Feature Index',
-                tickmode: 'array',
-                tickvals: Array.from({length: p}, (_, j) => j),
-                ticktext: Array.from({length: p}, (_, j) => `p${j}`)
-            },
-            yaxis: { 
-                title: 'Value',
-                range: [-4, 4]
-            },
-            title: `Dot Products: ${resultData[0].slice(0, Math.min(n, 2)).map(v => v.toFixed(2)).join(', ')}`,
-            titlefont: { size: 12 }
-        };
-        
-        Plotly.react(containerId, traces, layout);
-    }
-    
     // Create step visualization
     function createStepVisualization(containerId) {
         const batch = parseInt(document.getElementById('einsum-batchSlider').value);
         const n = parseInt(document.getElementById('einsum-nSlider').value);
-        const p = parseInt(document.getElementById('einsum-pSlider').value);
         
         let stepsHTML = '<div style="font-size: 11px; line-height: 1.3;">';
         stepsHTML += '<div style="font-weight: bold; margin-bottom: 8px; color: #495057;">Computation Details:</div>';
@@ -844,76 +779,66 @@
         
         container.innerHTML = `
             <div class="einsum-arch-container">
-                <!-- Branch Row -->
-                <div class="einsum-arch-row-1">
-                    <div class="einsum-arch-box functions">
-                        <div class="einsum-arch-label">Input Functions</div>
-                        ${funcBatchHTML}
-                        <div class="einsum-arch-dims">[${batch}, M]</div>
-                    </div>
-                    
-                    <div class="einsum-arch-arrow">→</div>
-                    
-                    <div class="einsum-arch-box branch">
-                        <div class="einsum-arch-label">Branch Net</div>
-                        <div style="font-size: 16px; margin: 10px 0; transform: scale(2.5);">${neuralNetworkIcon}</div>
-                        <div class="einsum-arch-dims">Neural Network</div>
-                    </div>
-                    
-                    <div class="einsum-arch-arrow">→</div>
-                    
-                    <div class="einsum-arch-box branch">
-                        <div class="einsum-arch-label">Branch Output</div>
-                        <div style="font-family: monospace; font-size: 10px; margin: 5px 0;">
-                            b₀: [${Array(p).fill('●').join(' ')}]<br>
-                            ${batch > 1 ? `b₁: [${Array(p).fill('●').join(' ')}]<br>` : ''}
-                            ${batch > 2 ? `b₂: [${Array(p).fill('●').join(' ')}]<br>` : ''}
+                <!-- Left Panel for Branch and Trunk Pipelines -->
+                <div class="einsum-arch-pipelines">
+                    <!-- Branch Path -->
+                    <div class="einsum-arch-pipeline-row">
+                        <div class="einsum-arch-box functions input-box">
+                            <div class="einsum-arch-label">Input Functions</div>
+                            ${funcBatchHTML}
+                            <div class="einsum-arch-dims">[${batch}, M]</div>
                         </div>
-                        <div class="einsum-arch-dims">[${batch}, ${p}]</div>
+                        <div class="einsum-arch-arrow">→</div>
+                        <div class="einsum-arch-box branch">
+                            <div class="einsum-arch-label">Branch Net</div>
+                            <div style="margin: 5px 0; transform: scale(2);">${neuralNetworkIcon}</div>
+                            <div class="einsum-arch-dims">NN</div>
+                        </div>
+                        <div class="einsum-arch-arrow">→</div>
+                        <div class="einsum-arch-box branch">
+                            <div class="einsum-arch-label">Branch Output</div>
+                            <div style="font-family: monospace; font-size: 10px; margin: 5px 0;">
+                                b₀: [${Array(p).fill('●').join(' ')}]<br>
+                                ${batch > 1 ? `b₁: [${Array(p).fill('●').join(' ')}]<br>` : ''}
+                                ${batch > 2 ? `b₂: [${Array(p).fill('●').join(' ')}]<br>` : ''}
+                            </div>
+                             <div class="einsum-arch-dims">[${batch}, ${p}]</div>
+                        </div>
+                    </div>
+                    <!-- Trunk Path -->
+                    <div class="einsum-arch-pipeline-row">
+                        <div class="einsum-arch-box queries input-box">
+                            <div class="einsum-arch-label">Query Points</div>
+                            ${queryBatchHTML}
+                            <div class="einsum-arch-dims">[${batch}, ${n}, d]</div>
+                        </div>
+                        <div class="einsum-arch-arrow">→</div>
+                        <div class="einsum-arch-box trunk">
+                            <div class="einsum-arch-label">Trunk Net</div>
+                            <div style="margin: 5px 0; transform: scale(2);">${neuralNetworkIcon}</div>
+                            <div class="einsum-arch-dims">NN</div>
+                        </div>
+                        <div class="einsum-arch-arrow">→</div>
+                        <div class="einsum-arch-box trunk">
+                            <div class="einsum-arch-label">Trunk Output</div>
+                             <div style="font-family: monospace; font-size: 9px; margin: 5px 0;">
+                                t₀: [${Array(n).fill(`[${Array(p).fill('●').join('')}]`).join(' ')}]<br>
+                                ${batch > 1 ? `t₁: [${Array(n).fill(`[${Array(p).fill('●').join('')}]`).join(' ')}]<br>` : ''}
+                                ${batch > 2 ? `t₂: [${Array(n).fill(`[${Array(p).fill('●').join('')}]`).join(' ')}]<br>` : ''}
+                            </div>
+                            <div class="einsum-arch-dims">[${batch}, ${n}, ${p}]</div>
+                        </div>
                     </div>
                 </div>
-                
-                <!-- Trunk Row -->
-                <div class="einsum-arch-row-2">
-                    <div class="einsum-arch-box queries">
-                        <div class="einsum-arch-label">Query Points</div>
-                        ${queryBatchHTML}
-                        <div class="einsum-arch-dims">[${batch}, ${n}, d]</div>
-                    </div>
-                    
-                    <div class="einsum-arch-arrow">→</div>
-                    
-                    <div class="einsum-arch-box trunk">
-                        <div class="einsum-arch-label">Trunk Net</div>
-                        <div style="font-size: 16px; margin: 10px 0;">${neuralNetworkIcon}</div>
-                        <div class="einsum-arch-dims">Neural Network</div>
-                    </div>
-                    
-                    <div class="einsum-arch-arrow">→</div>
-                    
-                    <div class="einsum-arch-box trunk">
-                        <div class="einsum-arch-label">Trunk Output</div>
-                        <div style="font-family: monospace; font-size: 9px; margin: 5px 0;">
-                            t₀: [${Array(n).fill(`[${Array(p).fill('●').join('')}]`).join(' ')}]<br>
-                            ${batch > 1 ? `t₁: [${Array(n).fill(`[${Array(p).fill('●').join('')}]`).join(' ')}]<br>` : ''}
-                            ${batch > 2 ? `t₂: [${Array(n).fill(`[${Array(p).fill('●').join('')}]`).join(' ')}]<br>` : ''}
-                        </div>
-                        <div class="einsum-arch-dims">[${batch}, ${n}, ${p}]</div>
-                    </div>
-                </div>
-                
-                <!-- Combination Row -->
-                <div class="einsum-arch-row-3">
-                    <div class="einsum-arch-arrow" style="transform: rotate(-45deg);">↘</div>
-                    
-                    <div class="einsum-arch-box einsum">
+
+                <!-- Right Panel for Combination -->
+                <div class="einsum-arch-combination-row">
+                     <div class="einsum-arch-box einsum">
                         <div class="einsum-arch-label">EINSUM</div>
                         <div style="font-size: 14px; margin: 8px 0;">⊗</div>
                         <div style="font-size: 10px;">'bp,bnp→bn'</div>
                     </div>
-                    
                     <div class="einsum-arch-arrow">→</div>
-                    
                     <div class="einsum-arch-box output">
                         <div class="einsum-arch-label">Function Values</div>
                         <div style="font-family: monospace; font-size: 10px; margin: 5px 0;">
@@ -976,7 +901,6 @@
         const container = document.getElementById('einsum-computationSteps');
         const batch = parseInt(document.getElementById('einsum-batchSlider').value);
         const n = parseInt(document.getElementById('einsum-nSlider').value);
-        const p = parseInt(document.getElementById('einsum-pSlider').value);
         
         let stepsHTML = '';
         let stepIndex = 0;
@@ -1070,7 +994,6 @@
         createArchitectureDiagram();
         createBranchHeatmap(branchData, 'einsum-plotBranch');
         createTrunkVisualization(trunkData, 'einsum-plotTrunk');
-        createComputationVisualization(branchData, trunkData, resultData, 'einsum-plotComputation');
         createResultHeatmap(resultData, 'einsum-plotResult');
         createStepVisualization('einsum-plotSteps');
         
@@ -1104,7 +1027,7 @@
     // Handle window resize
     window.addEventListener('resize', () => {
         setTimeout(() => {
-            const plots = ['einsum-plotBranch', 'einsum-plotTrunk', 'einsum-plotComputation', 'einsum-plotResult'];
+            const plots = ['einsum-plotBranch', 'einsum-plotTrunk', 'einsum-plotResult'];
             plots.forEach(plotId => {
                 const element = document.getElementById(plotId);
                 if (element && element.parentElement) {
