@@ -31,7 +31,7 @@
     
     .einsum-right-section {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
         grid-template-rows: 1fr 1fr;
         gap: 15px;
         align-self: center;
@@ -811,6 +811,36 @@
             queryBatchHTML += `<div class="einsum-batch-item query">y${b}</div>`;
         }
         queryBatchHTML += '</div>';
+        const neuralNetworkIcon = `
+<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+  <g stroke="#8B7ED8" stroke-width="0.3" opacity="0.6">
+    <line x1="2" y1="5" x2="6" y2="3"/>
+    <line x1="2" y1="5" x2="6" y2="6"/>
+    <line x1="2" y1="5" x2="6" y2="10"/>
+    <line x1="2" y1="5" x2="6" y2="13"/>
+    <line x1="2" y1="11" x2="6" y2="3"/>
+    <line x1="2" y1="11" x2="6" y2="6"/>
+    <line x1="2" y1="11" x2="6" y2="10"/>
+    <line x1="2" y1="11" x2="6" y2="13"/>
+    <line x1="6" y1="3" x2="14" y2="5"/>
+    <line x1="6" y1="3" x2="14" y2="11"/>
+    <line x1="6" y1="6" x2="14" y2="5"/>
+    <line x1="6" y1="6" x2="14" y2="11"/>
+    <line x1="6" y1="10" x2="14" y2="5"/>
+    <line x1="6" y1="10" x2="14" y2="11"/>
+    <line x1="6" y1="13" x2="14" y2="5"/>
+    <line x1="6" y1="13" x2="14" y2="11"/>
+  </g>
+  <circle cx="2" cy="5" r="1.1" fill="#4A90E2" stroke="#2E5C8A" stroke-width="0.4"/>
+  <circle cx="2" cy="11" r="1.1" fill="#4A90E2" stroke="#2E5C8A" stroke-width="0.4"/>
+  <circle cx="6" cy="3" r="1.1" fill="#7B68EE" stroke="#5A4FCF" stroke-width="0.4"/>
+  <circle cx="6" cy="6" r="1.1" fill="#7B68EE" stroke="#5A4FCF" stroke-width="0.4"/>
+  <circle cx="6" cy="10" r="1.1" fill="#7B68EE" stroke="#5A4FCF" stroke-width="0.4"/>
+  <circle cx="6" cy="13" r="1.1" fill="#7B68EE" stroke="#5A4FCF" stroke-width="0.4"/>
+  <circle cx="14" cy="5" r="1.1" fill="#FF6B6B" stroke="#E63946" stroke-width="0.4"/>
+  <circle cx="14" cy="11" r="1.1" fill="#FF6B6B" stroke="#E63946" stroke-width="0.4"/>
+</svg>
+`;
         
         container.innerHTML = `
             <div class="einsum-arch-container">
@@ -826,7 +856,7 @@
                     
                     <div class="einsum-arch-box branch">
                         <div class="einsum-arch-label">Branch Net</div>
-                        <div style="font-size: 16px; margin: 10px 0;">🧠</div>
+                        <div style="font-size: 16px; margin: 10px 0; transform: scale(2.5);">${neuralNetworkIcon}</div>
                         <div class="einsum-arch-dims">Neural Network</div>
                     </div>
                     
@@ -855,7 +885,7 @@
                     
                     <div class="einsum-arch-box trunk">
                         <div class="einsum-arch-label">Trunk Net</div>
-                        <div style="font-size: 16px; margin: 10px 0;">🧠</div>
+                        <div style="font-size: 16px; margin: 10px 0;">${neuralNetworkIcon}</div>
                         <div class="einsum-arch-dims">Neural Network</div>
                     </div>
                     
