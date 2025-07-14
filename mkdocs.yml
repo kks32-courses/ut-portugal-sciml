@@ -120,7 +120,7 @@ nav:
   - DeepONet:
     - DeepONet: 02-deeponet/deeponet.ipynb
     - DeepONet Interpretation: 02-deeponet/deeponet-explanation.md
-    - Einsum: 02-deeponet/einsum.md
+    - DeepONet Batch Einsum: 02-deeponet/einsum.md
   - DiffSim:
     - Differentiable Simulations: 03-diffsim/diffsim.ipynb
     - DiffSim Projectile: 03-diffsim/projectile.md
