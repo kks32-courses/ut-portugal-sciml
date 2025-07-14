@@ -16,10 +16,25 @@
         border-radius: 8px;
     }
     
-    .einsum-container { 
-        display: grid; 
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
-        gap: 20px; 
+    .einsum-main-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-top: 20px;
+    }
+    
+    .einsum-left-section {
+        display: grid;
+        grid-template-rows: auto auto;
+        gap: 20px;
+    }
+    
+    .einsum-right-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 15px;
+        align-self: center;
     }
     
     .einsum-plot-container { 
@@ -275,8 +290,128 @@
         color: #666;
     }
     
-    .einsum-wide-container {
+    .einsum-arch-container {
+        display: grid;
+        grid-template-columns: 1fr 0.3fr 1fr 0.3fr 1fr;
+        grid-template-rows: auto auto auto;
+        gap: 10px 15px;
+        margin: 15px 0;
+        align-items: center;
+        justify-items: center;
+        font-size: 12px;
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .einsum-arch-row-1 {
+        grid-row: 1;
+        display: contents;
+    }
+    
+    .einsum-arch-row-2 {
+        grid-row: 2;
+        display: contents;
+    }
+    
+    .einsum-arch-row-3 {
+        grid-row: 3;
         grid-column: 1 / -1;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        align-items: center;
+    }
+    
+    .einsum-arch-box {
+        border: 2px solid;
+        border-radius: 8px;
+        padding: 10px;
+        background-color: #f8f9fa;
+        text-align: center;
+        min-width: 80px;
+        position: relative;
+    }
+    
+    .einsum-arch-box.functions {
+        border-color: #007bff;
+        background-color: #e3f2fd;
+    }
+    
+    .einsum-arch-box.branch {
+        border-color: #28a745;
+        background-color: #d4edda;
+    }
+    
+    .einsum-arch-box.queries {
+        border-color: #ffc107;
+        background-color: #fff3cd;
+    }
+    
+    .einsum-arch-box.trunk {
+        border-color: #dc3545;
+        background-color: #f8d7da;
+    }
+    
+    .einsum-arch-box.einsum {
+        border-color: #6f42c1;
+        background-color: #e8e3f3;
+        font-weight: bold;
+    }
+    
+    .einsum-arch-box.output {
+        border-color: #fd7e14;
+        background-color: #fdf2e9;
+    }
+    
+    .einsum-arch-arrow {
+        font-size: 18px;
+        font-weight: bold;
+        color: #6c757d;
+    }
+    
+    .einsum-arch-label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        font-size: 11px;
+    }
+    
+    .einsum-arch-dims {
+        font-family: 'Courier New', monospace;
+        font-size: 10px;
+        color: #666;
+        margin-top: 3px;
+    }
+    
+    .einsum-batch-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        align-items: center;
+    }
+    
+    .einsum-batch-item {
+        width: 60px;
+        height: 20px;
+        border: 1px solid;
+        border-radius: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        font-weight: bold;
+    }
+    
+    .einsum-batch-item.func {
+        border-color: #007bff;
+        background-color: #cce7ff;
+        color: #004085;
+    }
+    
+    .einsum-batch-item.query {
+        border-color: #ffc107;
+        background-color: #fff8cc;
+        color: #856404;
     }
 </style>
 </head>
@@ -335,6 +470,12 @@
         </div>
     </div>
 
+    <!-- DeepONet Architecture with Batching -->
+    <div class="einsum-operation-visual">
+        <h3 style="text-align: center; margin-bottom: 20px;">DeepONet Architecture with Batching</h3>
+        <div id="einsum-architectureDiagram"></div>
+    </div>
+
     <!-- Operation Flow -->
     <div class="einsum-operation-visual">
         <h3 style="text-align: center; margin-bottom: 20px;">Tensor Flow Visualization</h3>
@@ -353,22 +494,31 @@
 
     <div id="einsum-statusMessage"></div>
 
-    <div class="einsum-container">
-        <div class="einsum-plot-container">
-            <div class="einsum-plot-title">Branch Output Vectors [batch, p]</div>
-            <div id="einsum-plotBranch"></div>
+    <div class="einsum-main-layout">
+        <div class="einsum-left-section">
+            <div class="einsum-plot-container">
+                <div class="einsum-plot-title">Branch Output Vectors [batch, p]</div>
+                <div id="einsum-plotBranch"></div>
+            </div>
+            <div class="einsum-plot-container">
+                <div class="einsum-plot-title">Trunk Feature Matrix [batch, n, p]</div>
+                <div id="einsum-plotTrunk"></div>
+            </div>
         </div>
-        <div class="einsum-plot-container">
-            <div class="einsum-plot-title">Trunk Feature Matrix [batch, n, p]</div>
-            <div id="einsum-plotTrunk"></div>
-        </div>
-        <div class="einsum-plot-container einsum-wide-container">
-            <div class="einsum-plot-title">Dot Product Computation Visualization</div>
-            <div id="einsum-plotComputation"></div>
-        </div>
-        <div class="einsum-plot-container">
-            <div class="einsum-plot-title">Final Result [batch, n]</div>
-            <div id="einsum-plotResult"></div>
+        
+        <div class="einsum-right-section">
+            <div class="einsum-plot-container">
+                <div class="einsum-plot-title">Dot Product Computation</div>
+                <div id="einsum-plotComputation"></div>
+            </div>
+            <div class="einsum-plot-container">
+                <div class="einsum-plot-title">Final Result [batch, n]</div>
+                <div id="einsum-plotResult"></div>
+            </div>
+            <div class="einsum-plot-container" style="grid-column: 1 / -1;">
+                <div class="einsum-plot-title">Step-by-Step Computation Details</div>
+                <div id="einsum-plotSteps"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -517,7 +667,7 @@
         Plotly.react(containerId, traces, layout);
     }
     
-    // Create computation visualization
+    // Create simplified computation visualization
     function createComputationVisualization(branchData, trunkData, resultData, containerId) {
         const batch = branchData.length;
         const n = trunkData[0].length;
@@ -525,82 +675,84 @@
         
         const traces = [];
         
-        // Create a visualization showing the dot product computation
-        for (let b = 0; b < batch; b++) {
-            for (let i = 0; i < n; i++) {
-                const x = Array.from({length: p}, (_, j) => j);
-                const y_branch = branchData[b];
-                const y_trunk = trunkData[b][i];
-                
-                traces.push({
-                    x: x,
-                    y: y_branch,
-                    mode: 'lines+markers',
-                    name: `B${b} Branch`,
-                    line: { color: '#28a745', width: 3 },
-                    marker: { size: 8 },
-                    xaxis: `x${b * n + i + 1}`,
-                    yaxis: `y${b * n + i + 1}`,
-                    showlegend: b === 0 && i === 0
-                });
-                
-                traces.push({
-                    x: x,
-                    y: y_trunk,
-                    mode: 'lines+markers',
-                    name: `B${b} Trunk n${i}`,
-                    line: { color: '#dc3545', width: 3, dash: 'dash' },
-                    marker: { size: 8 },
-                    xaxis: `x${b * n + i + 1}`,
-                    yaxis: `y${b * n + i + 1}`,
-                    showlegend: b === 0 && i === 0
-                });
-            }
+        // Show only first batch for clarity
+        const b = 0;
+        for (let i = 0; i < Math.min(n, 2); i++) { // Show max 2 query points
+            const x = Array.from({length: p}, (_, j) => j);
+            const y_branch = branchData[b];
+            const y_trunk = trunkData[b][i];
+            
+            traces.push({
+                x: x,
+                y: y_branch,
+                mode: 'lines+markers',
+                name: `Branch B${b}`,
+                line: { color: '#28a745', width: 2 },
+                marker: { size: 6 },
+                showlegend: i === 0
+            });
+            
+            traces.push({
+                x: x,
+                y: y_trunk,
+                mode: 'lines+markers',
+                name: `Trunk B${b} n${i}`,
+                line: { color: '#dc3545', width: 2, dash: 'dash' },
+                marker: { size: 6 },
+                showlegend: i === 0
+            });
         }
         
         const layout = {
-            margin: { l: 40, r: 20, t: 60, b: 40 },
-            height: 200 * batch,
-            grid: { rows: batch, columns: n, pattern: 'independent' },
-            annotations: []
+            margin: { l: 40, r: 20, t: 30, b: 40 },
+            height: 200,
+            xaxis: { 
+                title: 'Feature Index',
+                tickmode: 'array',
+                tickvals: Array.from({length: p}, (_, j) => j),
+                ticktext: Array.from({length: p}, (_, j) => `p${j}`)
+            },
+            yaxis: { 
+                title: 'Value',
+                range: [-4, 4]
+            },
+            title: `Dot Products: ${resultData[0].slice(0, Math.min(n, 2)).map(v => v.toFixed(2)).join(', ')}`,
+            titlefont: { size: 12 }
         };
         
-        // Add subplot titles and axes
-        for (let b = 0; b < batch; b++) {
-            for (let i = 0; i < n; i++) {
-                const subplotIndex = b * n + i + 1;
-                const xkey = subplotIndex === 1 ? 'xaxis' : `xaxis${subplotIndex}`;
-                const ykey = subplotIndex === 1 ? 'yaxis' : `yaxis${subplotIndex}`;
+        Plotly.react(containerId, traces, layout);
+    }
+    
+    // Create step visualization
+    function createStepVisualization(containerId) {
+        const batch = parseInt(document.getElementById('einsum-batchSlider').value);
+        const n = parseInt(document.getElementById('einsum-nSlider').value);
+        const p = parseInt(document.getElementById('einsum-pSlider').value);
+        
+        let stepsHTML = '<div style="font-size: 11px; line-height: 1.3;">';
+        stepsHTML += '<div style="font-weight: bold; margin-bottom: 8px; color: #495057;">Computation Details:</div>';
+        
+        for (let b = 0; b < Math.min(batch, 2); b++) {
+            for (let i = 0; i < Math.min(n, 2); i++) {
+                const computation = branchData[b].map((val, j) => 
+                    `${val.toFixed(1)}×${trunkData[b][i][j].toFixed(1)}`
+                ).join(' + ');
                 
-                layout[xkey] = {
-                    title: b === batch - 1 ? 'Feature Index' : '',
-                    tickmode: 'array',
-                    tickvals: Array.from({length: p}, (_, j) => j),
-                    ticktext: Array.from({length: p}, (_, j) => `p${j}`)
-                };
-                
-                layout[ykey] = {
-                    title: i === 0 ? `B${b}` : '',
-                    range: [-4, 4]
-                };
-                
-                // Add result annotation
-                layout.annotations.push({
-                    x: 0.5,
-                    y: 1,
-                    xref: `x${subplotIndex} domain`,
-                    yref: `y${subplotIndex} domain`,
-                    text: `Result: ${resultData[b][i].toFixed(2)}`,
-                    showarrow: false,
-                    font: { size: 12, color: '#ffc107' },
-                    bgcolor: 'rgba(255, 193, 7, 0.2)',
-                    bordercolor: '#ffc107',
-                    borderwidth: 1
-                });
+                stepsHTML += `
+                    <div style="margin: 4px 0; padding: 4px; background: #f8f9fa; border-radius: 3px;">
+                        <strong>B${b}, n${i}:</strong> ${computation} = <span style="color: #dc3545; font-weight: bold;">${resultData[b][i].toFixed(2)}</span>
+                    </div>
+                `;
             }
         }
         
-        Plotly.react(containerId, traces, layout);
+        if (batch > 2 || n > 2) {
+            stepsHTML += '<div style="margin-top: 8px; font-style: italic; color: #666;">... and more computations</div>';
+        }
+        
+        stepsHTML += '</div>';
+        
+        document.getElementById(containerId).innerHTML = stepsHTML;
     }
     
     // Create result heatmap
@@ -637,6 +789,121 @@
         };
         
         Plotly.react(containerId, [trace], layout);
+    }
+    
+    // Create DeepONet architecture diagram
+    function createArchitectureDiagram() {
+        const container = document.getElementById('einsum-architectureDiagram');
+        const batch = parseInt(document.getElementById('einsum-batchSlider').value);
+        const p = parseInt(document.getElementById('einsum-pSlider').value);
+        const n = parseInt(document.getElementById('einsum-nSlider').value);
+        
+        // Create batch stacks for input functions
+        let funcBatchHTML = '<div class="einsum-batch-stack">';
+        for (let b = 0; b < batch; b++) {
+            funcBatchHTML += `<div class="einsum-batch-item func">u${b}(x)</div>`;
+        }
+        funcBatchHTML += '</div>';
+        
+        // Create batch stacks for query points
+        let queryBatchHTML = '<div class="einsum-batch-stack">';
+        for (let b = 0; b < batch; b++) {
+            queryBatchHTML += `<div class="einsum-batch-item query">y${b}</div>`;
+        }
+        queryBatchHTML += '</div>';
+        
+        container.innerHTML = `
+            <div class="einsum-arch-container">
+                <!-- Branch Row -->
+                <div class="einsum-arch-row-1">
+                    <div class="einsum-arch-box functions">
+                        <div class="einsum-arch-label">Input Functions</div>
+                        ${funcBatchHTML}
+                        <div class="einsum-arch-dims">[${batch}, M]</div>
+                    </div>
+                    
+                    <div class="einsum-arch-arrow">→</div>
+                    
+                    <div class="einsum-arch-box branch">
+                        <div class="einsum-arch-label">Branch Net</div>
+                        <div style="font-size: 16px; margin: 10px 0;">🧠</div>
+                        <div class="einsum-arch-dims">Neural Network</div>
+                    </div>
+                    
+                    <div class="einsum-arch-arrow">→</div>
+                    
+                    <div class="einsum-arch-box branch">
+                        <div class="einsum-arch-label">Branch Output</div>
+                        <div style="font-family: monospace; font-size: 10px; margin: 5px 0;">
+                            b₀: [${Array(p).fill('●').join(' ')}]<br>
+                            ${batch > 1 ? `b₁: [${Array(p).fill('●').join(' ')}]<br>` : ''}
+                            ${batch > 2 ? `b₂: [${Array(p).fill('●').join(' ')}]<br>` : ''}
+                        </div>
+                        <div class="einsum-arch-dims">[${batch}, ${p}]</div>
+                    </div>
+                </div>
+                
+                <!-- Trunk Row -->
+                <div class="einsum-arch-row-2">
+                    <div class="einsum-arch-box queries">
+                        <div class="einsum-arch-label">Query Points</div>
+                        ${queryBatchHTML}
+                        <div class="einsum-arch-dims">[${batch}, ${n}, d]</div>
+                    </div>
+                    
+                    <div class="einsum-arch-arrow">→</div>
+                    
+                    <div class="einsum-arch-box trunk">
+                        <div class="einsum-arch-label">Trunk Net</div>
+                        <div style="font-size: 16px; margin: 10px 0;">🧠</div>
+                        <div class="einsum-arch-dims">Neural Network</div>
+                    </div>
+                    
+                    <div class="einsum-arch-arrow">→</div>
+                    
+                    <div class="einsum-arch-box trunk">
+                        <div class="einsum-arch-label">Trunk Output</div>
+                        <div style="font-family: monospace; font-size: 9px; margin: 5px 0;">
+                            t₀: [${Array(n).fill(`[${Array(p).fill('●').join('')}]`).join(' ')}]<br>
+                            ${batch > 1 ? `t₁: [${Array(n).fill(`[${Array(p).fill('●').join('')}]`).join(' ')}]<br>` : ''}
+                            ${batch > 2 ? `t₂: [${Array(n).fill(`[${Array(p).fill('●').join('')}]`).join(' ')}]<br>` : ''}
+                        </div>
+                        <div class="einsum-arch-dims">[${batch}, ${n}, ${p}]</div>
+                    </div>
+                </div>
+                
+                <!-- Combination Row -->
+                <div class="einsum-arch-row-3">
+                    <div class="einsum-arch-arrow" style="transform: rotate(-45deg);">↘</div>
+                    
+                    <div class="einsum-arch-box einsum">
+                        <div class="einsum-arch-label">EINSUM</div>
+                        <div style="font-size: 14px; margin: 8px 0;">⊗</div>
+                        <div style="font-size: 10px;">'bp,bnp→bn'</div>
+                    </div>
+                    
+                    <div class="einsum-arch-arrow">→</div>
+                    
+                    <div class="einsum-arch-box output">
+                        <div class="einsum-arch-label">Function Values</div>
+                        <div style="font-family: monospace; font-size: 10px; margin: 5px 0;">
+                            G₀: [${Array(n).fill('○').join(' ')}]<br>
+                            ${batch > 1 ? `G₁: [${Array(n).fill('○').join(' ')}]<br>` : ''}
+                            ${batch > 2 ? `G₂: [${Array(n).fill('○').join(' ')}]<br>` : ''}
+                        </div>
+                        <div class="einsum-arch-dims">[${batch}, ${n}]</div>
+                    </div>
+                    
+                    <div class="einsum-arch-arrow" style="transform: rotate(45deg);">↙</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 15px; font-size: 12px; color: #666;">
+                <strong>Key Insight:</strong> Branch learns function representations (${p} features), 
+                Trunk learns spatial coordinates (${p} features per query point). 
+                Einsum computes ${batch}×${n} = ${batch*n} dot products total.
+            </div>
+        `;
     }
     
     // Update flow visualization
@@ -772,10 +1039,12 @@
         resultData = computeEinsum(branchData, trunkData);
         
         // Update all visualizations
+        createArchitectureDiagram();
         createBranchHeatmap(branchData, 'einsum-plotBranch');
         createTrunkVisualization(trunkData, 'einsum-plotTrunk');
         createComputationVisualization(branchData, trunkData, resultData, 'einsum-plotComputation');
         createResultHeatmap(resultData, 'einsum-plotResult');
+        createStepVisualization('einsum-plotSteps');
         
         // Update flow and computation steps
         updateFlowVisualization();
@@ -818,7 +1087,9 @@
     });
     
     // Initialize
-    updateVisualization();
+    document.addEventListener('DOMContentLoaded', function() {
+        updateVisualization();
+    });
 })();
 </script>
 

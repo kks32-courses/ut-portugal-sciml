@@ -349,8 +349,6 @@ This interactive demo shows how differentiable simulation can be used to solve i
             epsilon: 1e-8
         }
         
-        // Loss plot;
-        
         // Physics constants
         const g = 9.81;
         const epsilon = 0.001; // for numerical gradients
@@ -486,7 +484,7 @@ This interactive demo shows how differentiable simulation can be used to solve i
         }
         
         // Update plots
-        function updatePlots(angle, velocity, showTrajectory = false, isOptimizing = false, animateProjectile = false) {
+        function updatePlots(angle, velocity, showTrajectory = false, isOptimizing = false) {
             const range = calculateRange(angle, velocity);
             const traces = [];
             
@@ -539,63 +537,7 @@ This interactive demo shows how differentiable simulation can be used to solve i
             
             Plotly.newPlot('proj-plot', traces, plotLayout);
             
-            // Animate projectile if requested
-            if (animateProjectile && currentTrajectory) {
-                animateProjectileMotion();
-            }
-            
-        // Animate projectile motion
-        function animateProjectileMotion() {
-            if (!currentTrajectory || currentTrajectory.length === 0) return;
-            
-            const animationDuration = 2000; // 2 seconds
-            const frameCount = 60;
-            const frameDuration = animationDuration / frameCount;
-            let currentFrame = 0;
-            
-            function animateFrame() {
-                if (currentFrame >= frameCount) return;
-                
-                const progress = currentFrame / (frameCount - 1);
-                const trajectoryIndex = Math.floor(progress * (currentTrajectory.length - 1));
-                const projectilePos = currentTrajectory[trajectoryIndex];
-                
-                // Update projectile position using Plotly.restyle
-                Plotly.restyle('proj-plot', {
-                    x: [[projectilePos[0]]],
-                    y: [[projectilePos[1]]]
-                }, [3]); // Index 3 should be the projectile trace
-                
-                currentFrame++;
-                
-                if (currentFrame < frameCount) {
-                    setTimeout(animateFrame, frameDuration);
-                } else {
-                    // Animation complete - remove projectile after a brief pause
-                    setTimeout(() => {
-                        Plotly.deleteTraces('proj-plot', [3]);
-                    }, 500);
-                }
-            }
-            
-            // Add initial projectile trace
-            const projectileTrace = {
-                x: [currentTrajectory[0][0]],
-                y: [currentTrajectory[0][1]],
-                mode: 'markers',
-                marker: { 
-                    color: '#ff6b35', 
-                    size: 15, 
-                    symbol: 'circle',
-                    line: { color: '#d63031', width: 2 }
-                },
-                name: 'Projectile'
-            };
-            
-            Plotly.addTraces('proj-plot', [projectileTrace]).then(() => {
-                setTimeout(animateFrame, frameDuration);
-            });
-        }
+            // Update loss plot
             if (optimizationHistory.length > 1) {
                 const lossTrace = {
                     x: Array.from({length: optimizationHistory.length}, (_, i) => i + 1),
@@ -618,12 +560,115 @@ This interactive demo shows how differentiable simulation can be used to solve i
             }
         }
         
+        // Animate projectile motion with improved timing
+        function animateProjectileMotion(angle, velocity) {
+            if (!currentTrajectory || currentTrajectory.length === 0) return;
+            
+            // Calculate realistic animation duration based on trajectory
+            const angleRad = angle * Math.PI / 180;
+            const vy = velocity * Math.sin(angleRad);
+            const actualFlightTime = 2 * vy / g; // seconds
+            
+            // Scale animation to be fast but visible (0.8-2.5 seconds based on flight time)
+            const animationDuration = Math.min(2500, Math.max(800, actualFlightTime * 400));
+            const frameRate = 60; // fps
+            const frameCount = Math.floor(animationDuration / (1000/frameRate));
+            const frameDuration = 1000 / frameRate;
+            
+            let currentFrame = 0;
+            
+            // Start with only target visible
+            updatePlots(angle, velocity, false, false);
+            
+            function animateFrame() {
+                if (currentFrame >= frameCount) {
+                    // Animation complete - show the final blue trajectory
+                    setTimeout(() => {
+                        updatePlots(angle, velocity, true, false);
+                        // Remove projectile marker
+                        const currentTraces = document.getElementById('proj-plot').data;
+                        if (currentTraces.length > 3) {
+                            Plotly.deleteTraces('proj-plot', [3]);
+                        }
+                    }, 100);
+                    return;
+                }
+                
+                const progress = currentFrame / (frameCount - 1);
+                const trajectoryIndex = Math.floor(progress * (currentTrajectory.length - 1));
+                const projectilePos = currentTrajectory[trajectoryIndex];
+                
+                // Create gray trajectory up to current position
+                const partialTrajectory = currentTrajectory.slice(0, trajectoryIndex + 1);
+                
+                // Update plot with partial gray trajectory and projectile
+                const traces = [];
+                
+                // Target
+                traces.push({
+                    x: [targetX],
+                    y: [0],
+                    mode: 'markers',
+                    marker: { color: 'red', size: 12, symbol: 'star' },
+                    name: 'Target'
+                });
+                
+                // Partial gray trajectory
+                if (partialTrajectory.length > 1) {
+                    traces.push({
+                        x: partialTrajectory.map(p => p[0]),
+                        y: partialTrajectory.map(p => p[1]),
+                        mode: 'lines',
+                        line: { color: 'rgba(128, 128, 128, 0.6)', width: 2 },
+                        name: 'Flight Path'
+                    });
+                }
+                
+                // Projectile
+                traces.push({
+                    x: [projectilePos[0]],
+                    y: [projectilePos[1]],
+                    mode: 'markers',
+                    marker: { 
+                        color: '#ff6b35', 
+                        size: 15, 
+                        symbol: 'circle',
+                        line: { color: '#d63031', width: 2 }
+                    },
+                    name: 'Projectile'
+                });
+                
+                const plotLayout = {
+                    margin: { l: 40, r: 20, t: 20, b: 40 },
+                    xaxis: { title: 'Distance (m)', range: [0, 80] },
+                    yaxis: { title: 'Height (m)', range: [0, 30] },
+                    showlegend: false,
+                    autosize: true
+                };
+                
+                Plotly.newPlot('proj-plot', traces, plotLayout);
+                
+                currentFrame++;
+                
+                if (currentFrame < frameCount) {
+                    setTimeout(animateFrame, frameDuration);
+                }
+            }
+            
+            // Start animation
+            setTimeout(animateFrame, 100);
+        }
+        
         // Event handlers
         function fire() {
             const angle = parseFloat(document.getElementById('proj-angleSlider').value);
             const velocity = parseFloat(document.getElementById('proj-velocitySlider').value);
+            
+            // Calculate trajectory first
+            currentTrajectory = calculateTrajectory(angle, velocity);
+            
             updateInfo(angle, velocity);
-            updatePlots(angle, velocity, true, false, true); // Show trajectory, not optimizing, animate projectile
+            animateProjectileMotion(angle, velocity);
         }
         
         function optimize() {
