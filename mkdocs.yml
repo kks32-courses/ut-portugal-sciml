@@ -119,6 +119,9 @@ nav:
   - DeepONet:
     - DeepONet: 02-deeponet/deeponet.ipynb
     - DeepONet Interpretation: 02-deeponet/deeponet-explanation.md
+  - DiffSim:
+    - Differentiable Simulations: 03-diffsim/diffsim.ipynb
+    - DiffSim Projectile: 03-diffsim/projectile.md
 
 copyright: |
   &copy; 2025 <a href="https://github.com/kks32-courses"  target="_blank" rel="noopener">Krishna Kumar</a>
