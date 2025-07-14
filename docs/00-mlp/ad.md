@@ -426,7 +426,7 @@
                     description: "Compute w₃ = w₁² and ẇ₃ = 2w₁ · ẇ₁",
                     highlight: ['square'],
                     edges: ['x1-square'],
-                    calculation: "Squaring operation:\nw₃ = w₁² = (%x1%)² = %v1%\nẇ₃ = 2w₁ · ẇ₁ = 2(%x1%) · 1 = %dv1_dx1%",
+                    calculation: "Squaring operation:\nw₃ = w₁² = (%x1%)² = %v1%\nẇ₃ = (dw₃/dw₁) · (dw₁/dx₁) = 2w₁ · ẇ₁ = 2(%x1%) · 1 = %dv1_dx1%",
                     nodeValues: { x1: '%x1%', x2: '%x2%', square: '%v1%', add: '', y: '' },
                     derivatives: { x1: '1', x2: '0', square: '%dv1_dx1%', add: '', y: '' }
                 },
