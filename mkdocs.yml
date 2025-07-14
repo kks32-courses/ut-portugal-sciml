@@ -1,9 +1,10 @@
 site_name: Scientific Machine Learning (SciML)
 site_author: Krishna Kumar
 site_description: Course materials for Scientific Machine Learning
-site_url: https://kks32-courses.github.io/utp-sciml/
-repo_url: https://github.com/kks32-courses/utp-sciml
-repo_name: Course Repo
+site_url: https://github.com/kks32-courses/ut-portugal-sciml
+repo_url: https://github.com/kks32-courses/ut-portugal-sciml
+use_directory_urls: false
+repo_name: SciML Course Repo
 
 theme:
   name: material

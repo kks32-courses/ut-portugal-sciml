@@ -893,8 +893,6 @@
                         </div>
                         <div class="einsum-arch-dims">[${batch}, ${n}]</div>
                     </div>
-                    
-                    <div class="einsum-arch-arrow" style="transform: rotate(45deg);">↙</div>
                 </div>
             </div>
             
