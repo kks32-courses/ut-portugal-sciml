@@ -119,11 +119,13 @@ nav:
     - Inverse analysis: 01-pinn/inverse-heat.ipynb
   - DeepONet:
     - DeepONet: 02-deeponet/deeponet.ipynb
+    - PI-DeepONet: 02-deeponet/pideeponet.ipynb
     - DeepONet Interpretation: 02-deeponet/deeponet-explanation.md
     - DeepONet Batch Einsum: 02-deeponet/einsum.md
   - DiffSim:
     - Differentiable Simulations: 03-diffsim/diffsim.ipynb
     - DiffSim Projectile: 03-diffsim/projectile.md
+    - Jax Roll: 03-diffsim/jax-roll.md
   - GNS: 04-gns/gnn.ipynb
 
 copyright: |

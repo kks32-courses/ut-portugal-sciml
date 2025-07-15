@@ -1,0 +1,163 @@
+\documentclass{standalone}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,decorations.pathreplacing}
+\begin{document}
+	\begin{tikzpicture}[
+		% Define styles for nodes and connections
+		small_neuron/.style={circle, draw, minimum size=12pt, inner sep=0pt, font=\tiny},
+		input_neuron/.style={small_neuron, fill=blue!20, draw=blue!80},
+		branch_neuron/.style={small_neuron, fill=green!20, draw=green!60},
+		trunk_neuron/.style={small_neuron, fill=orange!20, draw=orange!60},
+		trunk_input_neuron/.style={small_neuron, fill=yellow!20, draw=orange!60},
+		output_neuron/.style={circle, draw, minimum size=30pt, inner sep=0pt, font=\normalsize, fill=magenta!20, draw=magenta!60},
+		deriv_neuron/.style={circle, draw, fill=cyan!30, minimum size=30pt, inner sep=0pt},
+		vector_box/.style={rectangle, draw, minimum width=2cm, minimum height=3.5cm, fill=blue!5, draw=blue!60},
+		branch_vector/.style={rectangle, draw, minimum width=2cm, minimum height=3.5cm, fill=green!5, draw=green!60},
+		trunk_input_vector/.style={rectangle, draw, minimum width=2cm, minimum height=3.5cm, fill=yellow!10, draw=yellow!100},
+		trunk_vector/.style={rectangle, draw, minimum width=2cm, minimum height=3.5cm, fill=orange!5, draw=orange!60},
+		output_vector/.style={rectangle, draw, minimum width=2cm, minimum height=2.5cm, fill=magenta!5, draw=magenta!60},
+		deriv_box/.style={rectangle, draw, dashed, rounded corners, minimum width=3cm, minimum height=6cm, fill=cyan!5, draw=cyan!60},
+		net/.style={rectangle, draw, rounded corners=5pt, minimum width=2.5cm, minimum height=1.8cm, text centered, font=\large\bfseries},
+		branch_net/.style={net, fill=green!10, draw=green!60},
+		trunk_net/.style={net, fill=orange!10, draw=orange!60},
+		pde_loss/.style={rectangle, draw, fill=yellow!20, minimum width=4cm, minimum height=1.2cm, rounded corners, align=center, font=\bfseries},
+		conn/.style={gray!50, line width=0.8pt},
+		sensor/.style={circle, fill=black, inner sep=1pt, minimum size=4pt},
+		func/.style={thick, smooth},
+		dashed_line/.style={dashed, thick, gray!70},
+		axis/.style={thick, ->},
+		arrow/.style={->, >=latex, thick, blue!70}
+		]
+		
+		% Input function space
+		\node[text width=3cm, align=center, font=\bfseries] at (-2, 5) {Input Function\\Space $f(x)$};
+		
+		% Input space axes
+		\begin{scope}[shift={(-2, 2)}]
+			% Axes
+			\draw[axis] (-2, -1.5) -- (2, -1.5) node[right] {$x$};
+			\draw[axis] (-2, -1.5) -- (-2, 1.5) node[above] {$f(x)$};
+			
+			% Input functions (forcing terms)
+			\draw[func, blue, thick] (-1.8, -0.3) .. controls (-1, 0.5) and (0, 0.2) .. (1.8, -0.1);
+			\node[blue] at (-1.3, 0.7) {$f_1(x)$};
+			
+			\draw[func, red, thick] (-1.8, 0.1) .. controls (-0.5, -0.4) and (0.5, 0.6) .. (1.8, 0.3);
+			\node[red] at (1.3, 0.5) {$f_2(x)$};
+			
+			\draw[func, purple, thick] (-1.8, 0.5) .. controls (-0.2, -0.5) and (1, 0.4) .. (1.8, -0.5);
+			\node[purple] at (0, -0.3) {$f_3(x)$};
+			
+			% Fixed sensor locations
+			\foreach \x in {-1.5, -0.75, 0, 0.75, 1.5} {
+				\node[sensor] at (\x, -1.5) {};
+				\draw[dashed_line] (\x, -1.5) -- (\x, 1.5);
+			}
+			
+			\node[below] at (0, -1.8) {Sensor Locations};
+		\end{scope}
+		
+		% Input vector box
+		\node[vector_box] (input_vec) at (2, 2) {};
+		\node[input_neuron] (f1) at (2, 3.2) {$f_1$};
+		\node[input_neuron] (f2) at (2, 2.7) {$f_2$};
+		\node[input_neuron] (f3) at (2, 2.2) {$f_3$};
+		\node[text centered] at (2, 1.85) {$\vdots$};
+		\node[input_neuron] (fM) at (2, 1.3) {$f_M$};
+		\node[text width=1.8cm, align=center, font=\small] at (2, 0.7) {$\mathbf{f}$};
+		
+		% Branch network
+		\node[branch_net] (branch) at (5.5, 2) {Branch Net};
+		
+		% Branch vector box
+		\node[branch_vector] (branch_vec) at (8.5, 2) {};
+		\node[branch_neuron] (b1) at (8.5, 3.2) {$b_1$};
+		\node[branch_neuron] (b2) at (8.5, 2.7) {$b_2$};
+		\node[branch_neuron] (b3) at (8.5, 2.2) {$b_3$};
+		\node[text centered] at (8.5, 1.85) {$\vdots$};
+		\node[branch_neuron] (bp) at (8.5, 1.3) {$b_p$};
+		\node[text width=1.8cm, align=center, font=\small] at (8.5, 0.5) {$\mathbf{b}$};
+		
+		% Query location input
+		\node[trunk_input_vector] (query_vec) at (2, -1.75) {};
+		\node[trunk_input_neuron] (x) at (2, -1.75) {$x$};
+		
+		% Trunk network
+		\node[trunk_net] (trunk) at (5.5, -1.75) {Trunk Net};
+		
+		% Trunk vector box
+		\node[trunk_vector] (trunk_vec) at (8.5, -1.75) {};
+		\node[trunk_neuron] (t1) at (8.5, -0.5) {$t_1$};
+		\node[trunk_neuron] (t2) at (8.5, -1.0) {$t_2$};
+		\node[trunk_neuron] (t3) at (8.5, -1.5) {$t_3$};
+		\node[text centered] at (8.5, -1.8) {$\vdots$};
+		\node[trunk_neuron] (tp) at (8.5, -2.4) {$t_p$};
+		\node[text width=1.8cm, align=center, font=\small] at (8.5, -3) {$\mathbf{t}$};
+		
+		% Dot product operation
+		\node[circle, draw, minimum size=25pt, font=\Large] (dot) at (11.5, 0.25) {$\bigoplus$};
+		\node[below=5pt of dot] {$\mathbf{b} \cdot \mathbf{t}$};
+		
+		% Output (solution)
+		\node[output_neuron] (output) at (13.5, 0.2) {$u(x)$};
+		
+		% Physics-informed derivatives box
+		\node[deriv_box] (deriv_box) at (16.5, 0.4) {};
+		\node[deriv_neuron] (u_val) at (16.5, 2.25) {$u(x)$};
+		\node[deriv_neuron] (dudx) at (16.5, 1.0) {$\frac{du}{dx}$};
+		\node[deriv_neuron] (d2udx2) at (16.5, -0.25) {$\frac{d^2u}{dx^2}$};
+		\node[deriv_neuron] (pde_res) at (16.5, -1.5) {$\mathcal{R}_{PDE}$};
+		
+		% PDE loss computation
+		\node[pde_loss] (pde_loss_box) at (16.5, -4) {PDE Loss:\\$\mathcal{L}_{PDE} = \|\frac{d^2u}{dx^2} + f(x)\|^2$\\+ Boundary Conditions};
+		
+		% Output function space
+		\node[text width=3cm, align=center, font=\bfseries] at (21, 2.75) {Output Function\\Space $u(x)$};
+		
+		\begin{scope}[shift={(21, 0.2)}]
+			% Axes
+			\draw[axis] (-2, -1.5) -- (2, -1.5) node[right] {$x$};
+			\draw[axis] (-2, -1.5) -- (-2, 1.5) node[above] {$u(x)$};
+			
+			% Solution functions
+			\draw[func, magenta, very thick] (-1.8, -0.8) .. controls (-0.5, 0.5) and (0.5, 0.8) .. (1.8, -0.2);
+			\node[magenta, font=\bfseries] at (0, 0.9) {$u_1(x)$};
+						
+			\node[below] at (0, -1.8) {Solution Functions};
+		\end{scope}
+		
+		% Main connections
+		\draw[conn, thick] (input_vec) -- (branch);
+		\draw[conn, thick] (branch) -- (branch_vec);
+		\draw[conn, thick] (query_vec) -- (trunk);
+		\draw[conn, thick] (trunk) -- (trunk_vec);
+		\draw[conn, thick] (branch_vec) -- (dot);
+		\draw[conn, thick] (trunk_vec) -- (dot);
+		\draw[conn, thick] (dot) -- (output);
+		
+		% Physics-informed connections
+		\draw[arrow] (deriv_box) -- (pde_loss_box);
+		
+		% Data flow arrows
+		\draw[->, very thick, blue!60] (0, 2) -- (1, 2);
+		\draw[->, very thick, green!60] (3, 2) -- (4.2, 2);
+		\draw[->, very thick, orange!60] (3.2, -1.75) -- (4.2, -1.75);
+		\draw[->, very thick, magenta!60] (12, 0.25) -- (13, 0.25);
+		\draw[->, very thick, cyan!60] (14, 0.2) -- (15, 0.2);
+		
+		% Mathematical expressions
+		\node[text width=6cm, align=center, font=\large] at (12.5, -1.5) {
+			$u(x) = \sum_{i=1}^{p} b_i \cdot t_i(x) = \mathbf{b}^T \mathbf{t}$
+		};
+		
+		\node[text width=6cm, align=center, font=\large] at (21, -3) {
+			PDE: $\frac{d^2u}{dx^2} = -f(x)$
+		};
+		
+		% Title
+		\node[font=\Large\bfseries] at (10, 6.5) {Physics-Informed DeepONet for 1D Poisson Equation};
+		
+	\end{tikzpicture}
+\end{document}
