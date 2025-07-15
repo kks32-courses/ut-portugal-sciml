@@ -124,6 +124,7 @@ nav:
   - DiffSim:
     - Differentiable Simulations: 03-diffsim/diffsim.ipynb
     - DiffSim Projectile: 03-diffsim/projectile.md
+  - GNS: 04-gns/gnn.ipynb
 
 copyright: |
   &copy; 2025 <a href="https://github.com/kks32-courses"  target="_blank" rel="noopener">Krishna Kumar</a>
