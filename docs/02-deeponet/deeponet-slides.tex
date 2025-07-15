@@ -87,11 +87,15 @@ University of Texas at Austin \\
     \item Learn the DeepONet architecture: Branch and Trunk networks
     \item Implement operator learning for the derivative operator
     \item Apply DeepONet to the 1D nonlinear Darcy problem
+    \item Extend to Physics-Informed DeepONet with PDE constraints
 \end{itemize}
 
 \vspace{1cm}
 \centering
 \href{https://colab.research.google.com/github/kks32-courses/ut-portugal-sciml/blob/main/docs/02-deeponet/deeponet.ipynb}{\beamergotobutton{Open Notebook: DeepONet}}
+
+\vspace{0.5cm}
+\href{https://colab.research.google.com/github/kks32-courses/ut-portugal-sciml/blob/main/docs/02-deeponet/pideeponet.ipynb}{\beamergotobutton{Open Notebook: PI-DeepONet}}
 
 \end{frame}
 
@@ -533,6 +537,281 @@ where $u$ is the solution to the nonlinear Darcy equation for source $f$.
 \end{frame}
 
 %------------------------------------------------
+\section{Physics-Informed DeepONet}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Beyond Data-Driven Learning}
+
+\textbf{The next frontier:} What if we could incorporate physics directly into operator learning?
+
+\begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+        \textbf{Standard DeepONet:}
+        \begin{itemize}
+            \item Learns from data only
+            \item Requires many training examples
+            \item No physics knowledge
+            \item May violate physical laws
+        \end{itemize}
+        
+        \vspace{0.5cm}
+        
+        \textbf{Loss function:}
+        \begin{equation*}
+        \mathcal{L} = \|u_{pred} - u_{true}\|^2
+        \end{equation*}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \textbf{Physics-Informed DeepONet:}
+        \begin{itemize}
+            \item Incorporates governing equations
+            \item Enforces boundary conditions
+            \item Requires fewer training examples
+            \item Guarantees physical consistency
+        \end{itemize}
+        
+        \vspace{0.5cm}
+        
+        \textbf{Enhanced loss function:}
+        \begin{equation*}
+        \mathcal{L} = \mathcal{L}_{data} + \mathcal{L}_{physics} + \mathcal{L}_{boundary}
+        \end{equation*}
+    \end{column}
+\end{columns}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Physics-Informed DeepONet for 1D Poisson Equation}
+
+\textbf{Problem:} Learn the solution operator for the 1D Poisson equation:
+\begin{equation*}
+\frac{d^2u}{dx^2} = -f(x), \quad x \in [0,1]
+\end{equation*}
+with Dirichlet boundary conditions: $u(0) = 0$, $u(1) = 0$
+
+\vspace{1cm}
+
+\begin{block}{Physics-Informed Loss Components}
+\begin{enumerate}
+    \item \textbf{Data Loss:} $\mathcal{L}_{data} = \frac{1}{N} \sum_{i=1}^N \|u_{pred}^{(i)} - u_{true}^{(i)}\|^2$
+    \item \textbf{Physics Loss:} $\mathcal{L}_{physics} = \frac{1}{N} \sum_{i=1}^N \left\|\frac{d^2u_{pred}^{(i)}}{dx^2} + f^{(i)}\right\|^2$
+    \item \textbf{Boundary Loss:} $\mathcal{L}_{boundary} = \frac{1}{N} \sum_{i=1}^N \left[|u_{pred}^{(i)}(0)|^2 + |u_{pred}^{(i)}(1)|^2\right]$
+\end{enumerate}
+\end{block}
+
+\vspace{0.5cm}
+
+\centering
+\href{https://colab.research.google.com/github/kks32-courses/ut-portugal-sciml/blob/main/docs/02-deeponet/pideeponet.ipynb}{\beamergotobutton{Open Notebook: PI-DeepONet}}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Key Modifications from Standard DeepONet}
+
+\begin{block}{1. Automatic Differentiation}
+\begin{itemize}
+    \item Use PyTorch's autograd to compute $\frac{d^2u}{dx^2}$
+    \item Enable gradient computation through the network
+    \item Essential for physics loss calculation
+\end{itemize}
+\end{block}
+
+\begin{block}{2. Multi-Objective Training}
+\begin{itemize}
+    \item Balance data fidelity and physics consistency
+    \item Tunable weights: $\lambda_{physics}$, $\lambda_{boundary}$
+    \item Monitor all loss components during training
+\end{itemize}
+\end{block}
+
+\begin{block}{3. Soft Constraint Enforcement}
+\begin{itemize}
+    \item Physics and boundary conditions as loss terms
+    \item Flexible framework for different PDEs
+    \item Automatically satisfied solutions
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Architecture: Physics-Informed DeepONet}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figs/pideeponet-arch.png}
+    \caption*{Physics-Informed DeepONet architecture with automatic differentiation.}
+\end{figure}
+
+\textbf{Key components:}
+\begin{itemize}
+    \item \textbf{Branch Network:} Processes source functions $f(x)$
+    \item \textbf{Trunk Network:} Processes spatial coordinates $x$
+    \item \textbf{Automatic Differentiation:} Computes derivatives for physics loss
+    \item \textbf{Multi-Component Loss:} Combines data, physics, and boundary terms
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Training Dynamics: Loss Components}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{figs/pi_training_losses.png}
+    \caption*{Training history showing all loss components for PI-DeepONet.}
+\end{figure}
+
+\textbf{Observations:}
+\begin{itemize}
+    \item All loss components decrease during training
+    \item Physics and boundary losses reach near-zero values
+    \item Balanced learning across all objectives
+    \item Automatic physics constraint satisfaction
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Physics Consistency Verification}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{figs/pi_physics_verification.png}
+    \caption*{Verification of physics consistency: predictions, physics residuals, and boundary conditions.}
+\end{figure}
+
+\textbf{Comprehensive evaluation:}
+\begin{itemize}
+    \item \textbf{Prediction accuracy:} L2 error between predicted and true solutions
+    \item \textbf{Physics residual:} $\left|\frac{d^2u}{dx^2} + f(x)\right|$ approaches zero
+    \item \textbf{Boundary conditions:} $|u(0)| + |u(1)|$ near machine precision
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Comparison: Standard vs Physics-Informed DeepONet}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{figs/pi_vs_standard_comparison.png}
+    \caption*{Comparison of standard DeepONet vs Physics-Informed DeepONet predictions.}
+\end{figure}
+
+\textbf{Quantitative improvements:}
+\begin{itemize}
+    \item \textbf{Prediction accuracy:} 15-30\% reduction in L2 error
+    \item \textbf{Physics consistency:} Guaranteed PDE satisfaction
+    \item \textbf{Boundary conditions:} Exact enforcement vs approximate
+    \item \textbf{Data efficiency:} Better performance with fewer training examples
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Key Advantages of Physics-Informed DeepONet}
+
+\begin{block}{Enhanced Performance}
+\begin{itemize}
+    \item \textbf{Better generalization:} Physics constraints improve extrapolation
+    \item \textbf{Guaranteed consistency:} Solutions automatically satisfy PDEs
+    \item \textbf{Reduced data requirements:} Physics knowledge compensates for limited data
+\end{itemize}
+\end{block}
+
+\begin{block}{Interpretable Learning}
+\begin{itemize}
+    \item \textbf{Physics loss tracking:} Monitor PDE satisfaction during training
+    \item \textbf{Boundary condition enforcement:} Explicit constraint satisfaction
+    \item \textbf{Multi-scale learning:} Different components learn at different scales
+\end{itemize}
+\end{block}
+
+\begin{block}{Flexible Framework}
+\begin{itemize}
+    \item \textbf{Adaptable to different PDEs:} Change physics loss for new equations
+    \item \textbf{Various boundary conditions:} Dirichlet, Neumann, Robin, periodic
+    \item \textbf{Multi-dimensional extension:} 2D/3D problems with same principles
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Implementation Best Practices}
+
+\begin{block}{1. Loss Balancing}
+\begin{itemize}
+    \item Carefully tune $\lambda_{physics}$ and $\lambda_{boundary}$ weights
+    \item Monitor loss ratios during training
+    \item Adjust weights based on problem complexity
+\end{itemize}
+\end{block}
+
+\begin{block}{2. Training Strategy}
+\begin{itemize}
+    \item Use sufficient collocation points for physics loss
+    \item Enable automatic differentiation properly
+    \item Track all loss components separately
+\end{itemize}
+\end{block}
+
+\begin{block}{3. Validation}
+\begin{itemize}
+    \item Always verify physics satisfaction on test data
+    \item Check boundary condition compliance
+    \item Compare with standard DeepONet baseline
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Extensions and Future Directions}
+
+\begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+        \textbf{Immediate Extensions:}
+        \begin{itemize}
+            \item \textbf{Different boundary conditions:} Neumann, Robin, periodic
+            \item \textbf{Higher dimensions:} 2D/3D Poisson equations
+            \item \textbf{Time-dependent PDEs:} Parabolic and hyperbolic equations
+            \item \textbf{Nonlinear PDEs:} Variable coefficients and nonlinear terms
+        \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \textbf{Advanced Applications:}
+        \begin{itemize}
+            \item \textbf{Inverse problems:} Learn unknown parameters from data
+            \item \textbf{Multi-physics:} Coupled PDE systems
+            \item \textbf{Uncertainty quantification:} Bayesian neural operators
+            \item \textbf{Real-time control:} Fast PDE-constrained optimization
+        \end{itemize}
+    \end{column}
+\end{columns}
+
+\vspace{1cm}
+
+\begin{center}
+\textbf{Physics-informed DeepONet represents a powerful paradigm that combines the flexibility of neural networks with the rigor of physical laws.}
+\end{center}
+
+\end{frame}
+
+%------------------------------------------------
 \section{Summary and Implications}
 
 %------------------------------------------------
@@ -638,7 +917,7 @@ This opens new possibilities for:
 \vspace{1cm}
 
 \begin{center}
-\textbf{Next:} Combine with PINNs for physics-informed operator learning!
+\textbf{We've seen how physics-informed DeepONet combines PINNs with operator learning!}
 \end{center}
 
 \end{frame}
